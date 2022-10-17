@@ -1,0 +1,16 @@
+{
+  "name": "My Trips",
+  "short_name": "Projeto",
+  "icons": [
+    {
+      "src": "/vercel.svg",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "background_color": "#06092B",
+  "description": "Boilerlate utilizando Typescript, React, NextJS e Styled Components!",
+  "display": "fullscreen",
+  "start_url": "/",
+  "theme_color": "#06092B"
+}
