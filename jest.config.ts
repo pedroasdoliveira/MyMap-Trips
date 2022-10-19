@@ -4,6 +4,8 @@ const createJestConfig = nextJest({
   dir: './src'
 })
 
+const esModules = ['@react-leaflet', 'react-leaflet'].join('|')
+
 const customJestConfig = {
   verbose: true,
   clearMocks: true,
@@ -15,6 +17,7 @@ const customJestConfig = {
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }]
   },
+  transformIgnorePatterns: [`/node_modules/(?!${esModules})`],
   moduleDirectories: ['node_modules', '<rootDir>/src/'],
   testEnvironment: 'jest-environment-jsdom',
   testPathIgnorePatterns: ['/node_modules', '/.next/']

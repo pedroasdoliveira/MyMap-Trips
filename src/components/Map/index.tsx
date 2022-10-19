@@ -1,6 +1,21 @@
+import { type } from 'os'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 
-const Map = () => {
+type Places = {
+  id: string
+  name: string
+  slug: string
+  location: {
+    latitude: number
+    longitude: number
+  }
+}
+
+export type MapProps = {
+  places?: Places[]
+}
+
+const MapComponent = ({ places }: MapProps) => {
   return (
     <MapContainer
       center={[0, 0]}
@@ -12,13 +27,19 @@ const Map = () => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={[0, 0]}>
-        <Popup>
-          A pretty CSS3 popup. <br /> Easily customizable.
-        </Popup>
-      </Marker>
+      {places?.map(({ id, name, slug, location }) => {
+        const { latitude, longitude } = location
+
+        return (
+          <Marker
+            key={`place-${id}`}
+            position={[latitude, longitude]}
+            title={name}
+          ></Marker>
+        )
+      })}
     </MapContainer>
   )
 }
 
-export default Map
+export default MapComponent
