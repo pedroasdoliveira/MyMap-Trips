@@ -1,10 +1,13 @@
 /* eslint-disable */
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -43,6 +46,7 @@ export type Asset = Node & {
   documentInStages: Array<Asset>;
   /** The file name */
   fileName: Scalars['String'];
+  galleyPlace: Array<Place>;
   /** The file handle */
   handle: Scalars['String'];
   /** The height of the file */
@@ -94,6 +98,19 @@ export type AssetDocumentInStagesArgs = {
   includeCurrent?: Scalars['Boolean'];
   inheritLocale?: Scalars['Boolean'];
   stages?: Array<Stage>;
+};
+
+
+/** Asset system model */
+export type AssetGalleyPlaceArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: InputMaybe<Array<Locale>>;
+  orderBy?: InputMaybe<PlaceOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<PlaceWhereInput>;
 };
 
 
@@ -173,6 +190,7 @@ export type AssetConnection = {
 export type AssetCreateInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
   fileName: Scalars['String'];
+  galleyPlace?: InputMaybe<PlaceCreateManyInlineInput>;
   handle: Scalars['String'];
   height?: InputMaybe<Scalars['Float']>;
   /** Inline mutations for managing document localizations excluding the default locale */
@@ -257,6 +275,9 @@ export type AssetManyWhereInput = {
   documentInStages_every?: InputMaybe<AssetWhereStageInput>;
   documentInStages_none?: InputMaybe<AssetWhereStageInput>;
   documentInStages_some?: InputMaybe<AssetWhereStageInput>;
+  galleyPlace_every?: InputMaybe<PlaceWhereInput>;
+  galleyPlace_none?: InputMaybe<PlaceWhereInput>;
+  galleyPlace_some?: InputMaybe<PlaceWhereInput>;
   id?: InputMaybe<Scalars['ID']>;
   /** All values containing the given string. */
   id_contains?: InputMaybe<Scalars['ID']>;
@@ -346,6 +367,7 @@ export type AssetTransformationInput = {
 
 export type AssetUpdateInput = {
   fileName?: InputMaybe<Scalars['String']>;
+  galleyPlace?: InputMaybe<PlaceUpdateManyInlineInput>;
   handle?: InputMaybe<Scalars['String']>;
   height?: InputMaybe<Scalars['Float']>;
   /** Manage document localizations */
@@ -527,6 +549,9 @@ export type AssetWhereInput = {
   fileName_not_starts_with?: InputMaybe<Scalars['String']>;
   /** All values starting with the given string. */
   fileName_starts_with?: InputMaybe<Scalars['String']>;
+  galleyPlace_every?: InputMaybe<PlaceWhereInput>;
+  galleyPlace_none?: InputMaybe<PlaceWhereInput>;
+  galleyPlace_some?: InputMaybe<PlaceWhereInput>;
   handle?: InputMaybe<Scalars['String']>;
   /** All values containing the given string. */
   handle_contains?: InputMaybe<Scalars['String']>;
@@ -841,6 +866,8 @@ export type Mutation = {
   createAsset?: Maybe<Asset>;
   /** Create one page */
   createPage?: Maybe<Page>;
+  /** Create one place */
+  createPlace?: Maybe<Place>;
   /** Create one scheduledRelease */
   createScheduledRelease?: Maybe<ScheduledRelease>;
   /** Delete one asset from _all_ existing stages. Returns deleted document. */
@@ -859,8 +886,17 @@ export type Mutation = {
   deleteManyPages: BatchPayload;
   /** Delete many Page documents, return deleted documents */
   deleteManyPagesConnection: PageConnection;
+  /**
+   * Delete many Place documents
+   * @deprecated Please use the new paginated many mutation (deleteManyPlacesConnection)
+   */
+  deleteManyPlaces: BatchPayload;
+  /** Delete many Place documents, return deleted documents */
+  deleteManyPlacesConnection: PlaceConnection;
   /** Delete one page from _all_ existing stages. Returns deleted document. */
   deletePage?: Maybe<Page>;
+  /** Delete one place from _all_ existing stages. Returns deleted document. */
+  deletePlace?: Maybe<Place>;
   /** Delete and return scheduled operation */
   deleteScheduledOperation?: Maybe<ScheduledOperation>;
   /** Delete one scheduledRelease from _all_ existing stages. Returns deleted document. */
@@ -881,16 +917,29 @@ export type Mutation = {
   publishManyPages: BatchPayload;
   /** Publish many Page documents */
   publishManyPagesConnection: PageConnection;
+  /**
+   * Publish many Place documents
+   * @deprecated Please use the new paginated many mutation (publishManyPlacesConnection)
+   */
+  publishManyPlaces: BatchPayload;
+  /** Publish many Place documents */
+  publishManyPlacesConnection: PlaceConnection;
   /** Publish one page */
   publishPage?: Maybe<Page>;
+  /** Publish one place */
+  publishPlace?: Maybe<Place>;
   /** Schedule to publish one asset */
   schedulePublishAsset?: Maybe<Asset>;
   /** Schedule to publish one page */
   schedulePublishPage?: Maybe<Page>;
+  /** Schedule to publish one place */
+  schedulePublishPlace?: Maybe<Place>;
   /** Unpublish one asset from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
   scheduleUnpublishAsset?: Maybe<Asset>;
   /** Unpublish one page from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
   scheduleUnpublishPage?: Maybe<Page>;
+  /** Unpublish one place from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
+  scheduleUnpublishPlace?: Maybe<Place>;
   /** Unpublish one asset from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
   unpublishAsset?: Maybe<Asset>;
   /**
@@ -907,8 +956,17 @@ export type Mutation = {
   unpublishManyPages: BatchPayload;
   /** Find many Page documents that match criteria in specified stage and unpublish from target stages */
   unpublishManyPagesConnection: PageConnection;
+  /**
+   * Unpublish many Place documents
+   * @deprecated Please use the new paginated many mutation (unpublishManyPlacesConnection)
+   */
+  unpublishManyPlaces: BatchPayload;
+  /** Find many Place documents that match criteria in specified stage and unpublish from target stages */
+  unpublishManyPlacesConnection: PlaceConnection;
   /** Unpublish one page from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
   unpublishPage?: Maybe<Page>;
+  /** Unpublish one place from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
+  unpublishPlace?: Maybe<Place>;
   /** Update one asset */
   updateAsset?: Maybe<Asset>;
   /**
@@ -925,14 +983,25 @@ export type Mutation = {
   updateManyPages: BatchPayload;
   /** Update many Page documents */
   updateManyPagesConnection: PageConnection;
+  /**
+   * Update many places
+   * @deprecated Please use the new paginated many mutation (updateManyPlacesConnection)
+   */
+  updateManyPlaces: BatchPayload;
+  /** Update many Place documents */
+  updateManyPlacesConnection: PlaceConnection;
   /** Update one page */
   updatePage?: Maybe<Page>;
+  /** Update one place */
+  updatePlace?: Maybe<Place>;
   /** Update one scheduledRelease */
   updateScheduledRelease?: Maybe<ScheduledRelease>;
   /** Upsert one asset */
   upsertAsset?: Maybe<Asset>;
   /** Upsert one page */
   upsertPage?: Maybe<Page>;
+  /** Upsert one place */
+  upsertPlace?: Maybe<Place>;
 };
 
 
@@ -943,6 +1012,11 @@ export type MutationCreateAssetArgs = {
 
 export type MutationCreatePageArgs = {
   data: PageCreateInput;
+};
+
+
+export type MutationCreatePlaceArgs = {
+  data: PlaceCreateInput;
 };
 
 
@@ -986,8 +1060,28 @@ export type MutationDeleteManyPagesConnectionArgs = {
 };
 
 
+export type MutationDeleteManyPlacesArgs = {
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
+export type MutationDeleteManyPlacesConnectionArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
 export type MutationDeletePageArgs = {
   where: PageWhereUniqueInput;
+};
+
+
+export type MutationDeletePlaceArgs = {
+  where: PlaceWhereUniqueInput;
 };
 
 
@@ -1052,9 +1146,33 @@ export type MutationPublishManyPagesConnectionArgs = {
 };
 
 
+export type MutationPublishManyPlacesArgs = {
+  to?: Array<Stage>;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
+export type MutationPublishManyPlacesConnectionArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  from?: InputMaybe<Stage>;
+  last?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  to?: Array<Stage>;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
 export type MutationPublishPageArgs = {
   to?: Array<Stage>;
   where: PageWhereUniqueInput;
+};
+
+
+export type MutationPublishPlaceArgs = {
+  to?: Array<Stage>;
+  where: PlaceWhereUniqueInput;
 };
 
 
@@ -1077,6 +1195,14 @@ export type MutationSchedulePublishPageArgs = {
 };
 
 
+export type MutationSchedulePublishPlaceArgs = {
+  releaseAt?: InputMaybe<Scalars['DateTime']>;
+  releaseId?: InputMaybe<Scalars['String']>;
+  to?: Array<Stage>;
+  where: PlaceWhereUniqueInput;
+};
+
+
 export type MutationScheduleUnpublishAssetArgs = {
   from?: Array<Stage>;
   locales?: InputMaybe<Array<Locale>>;
@@ -1092,6 +1218,14 @@ export type MutationScheduleUnpublishPageArgs = {
   releaseAt?: InputMaybe<Scalars['DateTime']>;
   releaseId?: InputMaybe<Scalars['String']>;
   where: PageWhereUniqueInput;
+};
+
+
+export type MutationScheduleUnpublishPlaceArgs = {
+  from?: Array<Stage>;
+  releaseAt?: InputMaybe<Scalars['DateTime']>;
+  releaseId?: InputMaybe<Scalars['String']>;
+  where: PlaceWhereUniqueInput;
 };
 
 
@@ -1143,9 +1277,33 @@ export type MutationUnpublishManyPagesConnectionArgs = {
 };
 
 
+export type MutationUnpublishManyPlacesArgs = {
+  from?: Array<Stage>;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
+export type MutationUnpublishManyPlacesConnectionArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  from?: Array<Stage>;
+  last?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  stage?: InputMaybe<Stage>;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
 export type MutationUnpublishPageArgs = {
   from?: Array<Stage>;
   where: PageWhereUniqueInput;
+};
+
+
+export type MutationUnpublishPlaceArgs = {
+  from?: Array<Stage>;
+  where: PlaceWhereUniqueInput;
 };
 
 
@@ -1189,9 +1347,32 @@ export type MutationUpdateManyPagesConnectionArgs = {
 };
 
 
+export type MutationUpdateManyPlacesArgs = {
+  data: PlaceUpdateManyInput;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
+export type MutationUpdateManyPlacesConnectionArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  data: PlaceUpdateManyInput;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
 export type MutationUpdatePageArgs = {
   data: PageUpdateInput;
   where: PageWhereUniqueInput;
+};
+
+
+export type MutationUpdatePlaceArgs = {
+  data: PlaceUpdateInput;
+  where: PlaceWhereUniqueInput;
 };
 
 
@@ -1210,6 +1391,12 @@ export type MutationUpsertAssetArgs = {
 export type MutationUpsertPageArgs = {
   upsert: PageUpsertInput;
   where: PageWhereUniqueInput;
+};
+
+
+export type MutationUpsertPlaceArgs = {
+  upsert: PlaceUpsertInput;
+  where: PlaceWhereUniqueInput;
 };
 
 /** An object with an ID */
@@ -1709,6 +1896,504 @@ export type PageWhereUniqueInput = {
   slug?: InputMaybe<Scalars['String']>;
 };
 
+export type Place = Node & {
+  __typename?: 'Place';
+  /** The time the document was created */
+  createdAt: Scalars['DateTime'];
+  /** User that created this document */
+  createdBy?: Maybe<User>;
+  description?: Maybe<RichText>;
+  /** Get the document in other stages */
+  documentInStages: Array<Place>;
+  galley: Array<Asset>;
+  /** List of Place versions */
+  history: Array<Version>;
+  /** The unique identifier */
+  id: Scalars['ID'];
+  location: Location;
+  name: Scalars['String'];
+  /** The time the document was published. Null on documents in draft stage. */
+  publishedAt?: Maybe<Scalars['DateTime']>;
+  /** User that last published this document */
+  publishedBy?: Maybe<User>;
+  scheduledIn: Array<ScheduledOperation>;
+  slug: Scalars['String'];
+  /** System stage field */
+  stage: Stage;
+  /** The time the document was updated */
+  updatedAt: Scalars['DateTime'];
+  /** User that last updated this document */
+  updatedBy?: Maybe<User>;
+};
+
+
+export type PlaceCreatedByArgs = {
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+
+export type PlaceDocumentInStagesArgs = {
+  includeCurrent?: Scalars['Boolean'];
+  inheritLocale?: Scalars['Boolean'];
+  stages?: Array<Stage>;
+};
+
+
+export type PlaceGalleyArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: InputMaybe<Array<Locale>>;
+  orderBy?: InputMaybe<AssetOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<AssetWhereInput>;
+};
+
+
+export type PlaceHistoryArgs = {
+  limit?: Scalars['Int'];
+  skip?: Scalars['Int'];
+  stageOverride?: InputMaybe<Stage>;
+};
+
+
+export type PlacePublishedByArgs = {
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+
+export type PlaceScheduledInArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: InputMaybe<Array<Locale>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ScheduledOperationWhereInput>;
+};
+
+
+export type PlaceUpdatedByArgs = {
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+export type PlaceConnectInput = {
+  /** Allow to specify document position in list of connected documents, will default to appending at end of list */
+  position?: InputMaybe<ConnectPositionInput>;
+  /** Document to connect */
+  where: PlaceWhereUniqueInput;
+};
+
+/** A connection to a list of items. */
+export type PlaceConnection = {
+  __typename?: 'PlaceConnection';
+  aggregate: Aggregate;
+  /** A list of edges. */
+  edges: Array<PlaceEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+export type PlaceCreateInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  description?: InputMaybe<Scalars['RichTextAST']>;
+  galley: AssetCreateManyInlineInput;
+  location: LocationInput;
+  name: Scalars['String'];
+  slug: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PlaceCreateManyInlineInput = {
+  /** Connect multiple existing Place documents */
+  connect?: InputMaybe<Array<PlaceWhereUniqueInput>>;
+  /** Create and connect multiple existing Place documents */
+  create?: InputMaybe<Array<PlaceCreateInput>>;
+};
+
+export type PlaceCreateOneInlineInput = {
+  /** Connect one existing Place document */
+  connect?: InputMaybe<PlaceWhereUniqueInput>;
+  /** Create and connect one Place document */
+  create?: InputMaybe<PlaceCreateInput>;
+};
+
+/** An edge in a connection. */
+export type PlaceEdge = {
+  __typename?: 'PlaceEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: Place;
+};
+
+/** Identifies documents */
+export type PlaceManyWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: InputMaybe<Array<PlaceWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: InputMaybe<Array<PlaceWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: InputMaybe<Array<PlaceWhereInput>>;
+  /** Contains search across all appropriate fields. */
+  _search?: InputMaybe<Scalars['String']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  createdAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  createdAt_gte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  createdAt_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  /** All values less than the given value. */
+  createdAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  createdAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  createdAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not contained in given list. */
+  createdAt_not_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  createdBy?: InputMaybe<UserWhereInput>;
+  documentInStages_every?: InputMaybe<PlaceWhereStageInput>;
+  documentInStages_none?: InputMaybe<PlaceWhereStageInput>;
+  documentInStages_some?: InputMaybe<PlaceWhereStageInput>;
+  galley_every?: InputMaybe<AssetWhereInput>;
+  galley_none?: InputMaybe<AssetWhereInput>;
+  galley_some?: InputMaybe<AssetWhereInput>;
+  id?: InputMaybe<Scalars['ID']>;
+  /** All values containing the given string. */
+  id_contains?: InputMaybe<Scalars['ID']>;
+  /** All values ending with the given string. */
+  id_ends_with?: InputMaybe<Scalars['ID']>;
+  /** All values that are contained in given list. */
+  id_in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** All values that are not equal to given value. */
+  id_not?: InputMaybe<Scalars['ID']>;
+  /** All values not containing the given string. */
+  id_not_contains?: InputMaybe<Scalars['ID']>;
+  /** All values not ending with the given string */
+  id_not_ends_with?: InputMaybe<Scalars['ID']>;
+  /** All values that are not contained in given list. */
+  id_not_in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** All values not starting with the given string. */
+  id_not_starts_with?: InputMaybe<Scalars['ID']>;
+  /** All values starting with the given string. */
+  id_starts_with?: InputMaybe<Scalars['ID']>;
+  name?: InputMaybe<Scalars['String']>;
+  /** All values containing the given string. */
+  name_contains?: InputMaybe<Scalars['String']>;
+  /** All values ending with the given string. */
+  name_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are contained in given list. */
+  name_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values that are not equal to given value. */
+  name_not?: InputMaybe<Scalars['String']>;
+  /** All values not containing the given string. */
+  name_not_contains?: InputMaybe<Scalars['String']>;
+  /** All values not ending with the given string */
+  name_not_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are not contained in given list. */
+  name_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values not starting with the given string. */
+  name_not_starts_with?: InputMaybe<Scalars['String']>;
+  /** All values starting with the given string. */
+  name_starts_with?: InputMaybe<Scalars['String']>;
+  publishedAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  publishedAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  publishedAt_gte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  publishedAt_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  /** All values less than the given value. */
+  publishedAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  publishedAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  publishedAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not contained in given list. */
+  publishedAt_not_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  publishedBy?: InputMaybe<UserWhereInput>;
+  scheduledIn_every?: InputMaybe<ScheduledOperationWhereInput>;
+  scheduledIn_none?: InputMaybe<ScheduledOperationWhereInput>;
+  scheduledIn_some?: InputMaybe<ScheduledOperationWhereInput>;
+  slug?: InputMaybe<Scalars['String']>;
+  /** All values containing the given string. */
+  slug_contains?: InputMaybe<Scalars['String']>;
+  /** All values ending with the given string. */
+  slug_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are contained in given list. */
+  slug_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values that are not equal to given value. */
+  slug_not?: InputMaybe<Scalars['String']>;
+  /** All values not containing the given string. */
+  slug_not_contains?: InputMaybe<Scalars['String']>;
+  /** All values not ending with the given string */
+  slug_not_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are not contained in given list. */
+  slug_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values not starting with the given string. */
+  slug_not_starts_with?: InputMaybe<Scalars['String']>;
+  /** All values starting with the given string. */
+  slug_starts_with?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  updatedAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  updatedAt_gte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  updatedAt_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  /** All values less than the given value. */
+  updatedAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  updatedAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  updatedAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not contained in given list. */
+  updatedAt_not_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  updatedBy?: InputMaybe<UserWhereInput>;
+};
+
+export enum PlaceOrderByInput {
+  CreatedAtAsc = 'createdAt_ASC',
+  CreatedAtDesc = 'createdAt_DESC',
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  NameAsc = 'name_ASC',
+  NameDesc = 'name_DESC',
+  PublishedAtAsc = 'publishedAt_ASC',
+  PublishedAtDesc = 'publishedAt_DESC',
+  SlugAsc = 'slug_ASC',
+  SlugDesc = 'slug_DESC',
+  UpdatedAtAsc = 'updatedAt_ASC',
+  UpdatedAtDesc = 'updatedAt_DESC'
+}
+
+export type PlaceUpdateInput = {
+  description?: InputMaybe<Scalars['RichTextAST']>;
+  galley?: InputMaybe<AssetUpdateManyInlineInput>;
+  location?: InputMaybe<LocationInput>;
+  name?: InputMaybe<Scalars['String']>;
+  slug?: InputMaybe<Scalars['String']>;
+};
+
+export type PlaceUpdateManyInlineInput = {
+  /** Connect multiple existing Place documents */
+  connect?: InputMaybe<Array<PlaceConnectInput>>;
+  /** Create and connect multiple Place documents */
+  create?: InputMaybe<Array<PlaceCreateInput>>;
+  /** Delete multiple Place documents */
+  delete?: InputMaybe<Array<PlaceWhereUniqueInput>>;
+  /** Disconnect multiple Place documents */
+  disconnect?: InputMaybe<Array<PlaceWhereUniqueInput>>;
+  /** Override currently-connected documents with multiple existing Place documents */
+  set?: InputMaybe<Array<PlaceWhereUniqueInput>>;
+  /** Update multiple Place documents */
+  update?: InputMaybe<Array<PlaceUpdateWithNestedWhereUniqueInput>>;
+  /** Upsert multiple Place documents */
+  upsert?: InputMaybe<Array<PlaceUpsertWithNestedWhereUniqueInput>>;
+};
+
+export type PlaceUpdateManyInput = {
+  description?: InputMaybe<Scalars['RichTextAST']>;
+  name?: InputMaybe<Scalars['String']>;
+};
+
+export type PlaceUpdateManyWithNestedWhereInput = {
+  /** Update many input */
+  data: PlaceUpdateManyInput;
+  /** Document search */
+  where: PlaceWhereInput;
+};
+
+export type PlaceUpdateOneInlineInput = {
+  /** Connect existing Place document */
+  connect?: InputMaybe<PlaceWhereUniqueInput>;
+  /** Create and connect one Place document */
+  create?: InputMaybe<PlaceCreateInput>;
+  /** Delete currently connected Place document */
+  delete?: InputMaybe<Scalars['Boolean']>;
+  /** Disconnect currently connected Place document */
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+  /** Update single Place document */
+  update?: InputMaybe<PlaceUpdateWithNestedWhereUniqueInput>;
+  /** Upsert single Place document */
+  upsert?: InputMaybe<PlaceUpsertWithNestedWhereUniqueInput>;
+};
+
+export type PlaceUpdateWithNestedWhereUniqueInput = {
+  /** Document to update */
+  data: PlaceUpdateInput;
+  /** Unique document search */
+  where: PlaceWhereUniqueInput;
+};
+
+export type PlaceUpsertInput = {
+  /** Create document if it didn't exist */
+  create: PlaceCreateInput;
+  /** Update document if it exists */
+  update: PlaceUpdateInput;
+};
+
+export type PlaceUpsertWithNestedWhereUniqueInput = {
+  /** Upsert data */
+  data: PlaceUpsertInput;
+  /** Unique document search */
+  where: PlaceWhereUniqueInput;
+};
+
+/** This contains a set of filters that can be used to compare values internally */
+export type PlaceWhereComparatorInput = {
+  /** This field can be used to request to check if the entry is outdated by internal comparison */
+  outdated_to?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Identifies documents */
+export type PlaceWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: InputMaybe<Array<PlaceWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: InputMaybe<Array<PlaceWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: InputMaybe<Array<PlaceWhereInput>>;
+  /** Contains search across all appropriate fields. */
+  _search?: InputMaybe<Scalars['String']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  createdAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  createdAt_gte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  createdAt_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  /** All values less than the given value. */
+  createdAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  createdAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  createdAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not contained in given list. */
+  createdAt_not_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  createdBy?: InputMaybe<UserWhereInput>;
+  documentInStages_every?: InputMaybe<PlaceWhereStageInput>;
+  documentInStages_none?: InputMaybe<PlaceWhereStageInput>;
+  documentInStages_some?: InputMaybe<PlaceWhereStageInput>;
+  galley_every?: InputMaybe<AssetWhereInput>;
+  galley_none?: InputMaybe<AssetWhereInput>;
+  galley_some?: InputMaybe<AssetWhereInput>;
+  id?: InputMaybe<Scalars['ID']>;
+  /** All values containing the given string. */
+  id_contains?: InputMaybe<Scalars['ID']>;
+  /** All values ending with the given string. */
+  id_ends_with?: InputMaybe<Scalars['ID']>;
+  /** All values that are contained in given list. */
+  id_in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** All values that are not equal to given value. */
+  id_not?: InputMaybe<Scalars['ID']>;
+  /** All values not containing the given string. */
+  id_not_contains?: InputMaybe<Scalars['ID']>;
+  /** All values not ending with the given string */
+  id_not_ends_with?: InputMaybe<Scalars['ID']>;
+  /** All values that are not contained in given list. */
+  id_not_in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** All values not starting with the given string. */
+  id_not_starts_with?: InputMaybe<Scalars['ID']>;
+  /** All values starting with the given string. */
+  id_starts_with?: InputMaybe<Scalars['ID']>;
+  name?: InputMaybe<Scalars['String']>;
+  /** All values containing the given string. */
+  name_contains?: InputMaybe<Scalars['String']>;
+  /** All values ending with the given string. */
+  name_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are contained in given list. */
+  name_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values that are not equal to given value. */
+  name_not?: InputMaybe<Scalars['String']>;
+  /** All values not containing the given string. */
+  name_not_contains?: InputMaybe<Scalars['String']>;
+  /** All values not ending with the given string */
+  name_not_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are not contained in given list. */
+  name_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values not starting with the given string. */
+  name_not_starts_with?: InputMaybe<Scalars['String']>;
+  /** All values starting with the given string. */
+  name_starts_with?: InputMaybe<Scalars['String']>;
+  publishedAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  publishedAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  publishedAt_gte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  publishedAt_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  /** All values less than the given value. */
+  publishedAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  publishedAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  publishedAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not contained in given list. */
+  publishedAt_not_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  publishedBy?: InputMaybe<UserWhereInput>;
+  scheduledIn_every?: InputMaybe<ScheduledOperationWhereInput>;
+  scheduledIn_none?: InputMaybe<ScheduledOperationWhereInput>;
+  scheduledIn_some?: InputMaybe<ScheduledOperationWhereInput>;
+  slug?: InputMaybe<Scalars['String']>;
+  /** All values containing the given string. */
+  slug_contains?: InputMaybe<Scalars['String']>;
+  /** All values ending with the given string. */
+  slug_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are contained in given list. */
+  slug_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values that are not equal to given value. */
+  slug_not?: InputMaybe<Scalars['String']>;
+  /** All values not containing the given string. */
+  slug_not_contains?: InputMaybe<Scalars['String']>;
+  /** All values not ending with the given string */
+  slug_not_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are not contained in given list. */
+  slug_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values not starting with the given string. */
+  slug_not_starts_with?: InputMaybe<Scalars['String']>;
+  /** All values starting with the given string. */
+  slug_starts_with?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  updatedAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  updatedAt_gte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  updatedAt_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  /** All values less than the given value. */
+  updatedAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  updatedAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  updatedAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not contained in given list. */
+  updatedAt_not_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  updatedBy?: InputMaybe<UserWhereInput>;
+};
+
+/** The document in stages filter allows specifying a stage entry to cross compare the same document between different stages */
+export type PlaceWhereStageInput = {
+  /** Logical AND on all given filters. */
+  AND?: InputMaybe<Array<PlaceWhereStageInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: InputMaybe<Array<PlaceWhereStageInput>>;
+  /** Logical OR on all given filters. */
+  OR?: InputMaybe<Array<PlaceWhereStageInput>>;
+  /** This field contains fields which can be set as true or false to specify an internal comparison */
+  compareWithParent?: InputMaybe<PlaceWhereComparatorInput>;
+  /** Specify the stage to compare with */
+  stage?: InputMaybe<Stage>;
+};
+
+/** References Place record uniquely */
+export type PlaceWhereUniqueInput = {
+  id?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
+};
+
 export type PublishLocaleInput = {
   /** Locales to publish */
   locale: Locale;
@@ -1736,6 +2421,14 @@ export type Query = {
   pages: Array<Page>;
   /** Retrieve multiple pages using the Relay connection interface */
   pagesConnection: PageConnection;
+  /** Retrieve a single place */
+  place?: Maybe<Place>;
+  /** Retrieve document version */
+  placeVersion?: Maybe<DocumentVersion>;
+  /** Retrieve multiple places */
+  places: Array<Place>;
+  /** Retrieve multiple places using the Relay connection interface */
+  placesConnection: PlaceConnection;
   /** Retrieve a single scheduledOperation */
   scheduledOperation?: Maybe<ScheduledOperation>;
   /** Retrieve multiple scheduledOperations */
@@ -1837,6 +2530,44 @@ export type QueryPagesConnectionArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   stage?: Stage;
   where?: InputMaybe<PageWhereInput>;
+};
+
+
+export type QueryPlaceArgs = {
+  locales?: Array<Locale>;
+  stage?: Stage;
+  where: PlaceWhereUniqueInput;
+};
+
+
+export type QueryPlaceVersionArgs = {
+  where: VersionWhereInput;
+};
+
+
+export type QueryPlacesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: Array<Locale>;
+  orderBy?: InputMaybe<PlaceOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  stage?: Stage;
+  where?: InputMaybe<PlaceWhereInput>;
+};
+
+
+export type QueryPlacesConnectionArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: Array<Locale>;
+  orderBy?: InputMaybe<PlaceOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  stage?: Stage;
+  where?: InputMaybe<PlaceWhereInput>;
 };
 
 
@@ -2045,7 +2776,7 @@ export type ScheduledOperationUpdatedByArgs = {
   locales?: InputMaybe<Array<Locale>>;
 };
 
-export type ScheduledOperationAffectedDocument = Asset | Page;
+export type ScheduledOperationAffectedDocument = Asset | Page | Place;
 
 export type ScheduledOperationConnectInput = {
   /** Allow to specify document position in list of connected documents, will default to appending at end of list */
@@ -3474,10 +4205,26 @@ export type GetPageBySlugQueryVariables = Exact<{
 
 
 export type GetPageBySlugQuery = { __typename?: 'Query', page?: { __typename?: 'Page', id: string, slug: string, heading: string, body: { __typename?: 'RichText', html: string } } | null };
+
+export type GetPlacesQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetPlacesQuery = { __typename?: 'Query', places: Array<{ __typename?: 'Place', id: string, slug: string, name: string, location: { __typename?: 'Location', latitude: number, longitude: number }, description?: { __typename?: 'RichText', html: string } | null, galley: Array<{ __typename?: 'Asset', url: string, height?: number | null, width?: number | null }> }> };
+
+export type GetPlaceBySlugQueryVariables = Exact<{
+  slug: Scalars['String'];
+}>;
+
+
+export type GetPlaceBySlugQuery = { __typename?: 'Query', place?: { __typename?: 'Place', id: string, slug: string, name: string, location: { __typename?: 'Location', latitude: number, longitude: number }, description?: { __typename?: 'RichText', html: string } | null, galley: Array<{ __typename?: 'Asset', url: string, height?: number | null, width?: number | null }> } | null };
 
 
 export const GetPagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"heading"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"body"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"html"}}]}}]}}]}}]} as unknown as DocumentNode<GetPagesQuery, GetPagesQueryVariables>;
 export const GetPageBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPageBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"heading"}},{"kind":"Field","name":{"kind":"Name","value":"body"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"html"}}]}}]}}]}}]} as unknown as DocumentNode<GetPageBySlugQuery, GetPageBySlugQueryVariables>;
+export const GetPlacesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPlaces"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"places"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"location"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"html"}}]}},{"kind":"Field","name":{"kind":"Name","value":"galley"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"height"}},{"kind":"Field","name":{"kind":"Name","value":"width"}}]}}]}}]}}]} as unknown as DocumentNode<GetPlacesQuery, GetPlacesQueryVariables>;
+export const GetPlaceBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPlaceBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"place"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"location"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"html"}}]}},{"kind":"Field","name":{"kind":"Name","value":"galley"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"height"}},{"kind":"Field","name":{"kind":"Name","value":"width"}}]}}]}}]}}]} as unknown as DocumentNode<GetPlaceBySlugQuery, GetPlaceBySlugQueryVariables>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -3516,6 +4263,7 @@ export type Asset = Node & {
   documentInStages: Array<Asset>;
   /** The file name */
   fileName: Scalars['String'];
+  galleyPlace: Array<Place>;
   /** The file handle */
   handle: Scalars['String'];
   /** The height of the file */
@@ -3567,6 +4315,19 @@ export type AssetDocumentInStagesArgs = {
   includeCurrent?: Scalars['Boolean'];
   inheritLocale?: Scalars['Boolean'];
   stages?: Array<Stage>;
+};
+
+
+/** Asset system model */
+export type AssetGalleyPlaceArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: InputMaybe<Array<Locale>>;
+  orderBy?: InputMaybe<PlaceOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<PlaceWhereInput>;
 };
 
 
@@ -3646,6 +4407,7 @@ export type AssetConnection = {
 export type AssetCreateInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
   fileName: Scalars['String'];
+  galleyPlace?: InputMaybe<PlaceCreateManyInlineInput>;
   handle: Scalars['String'];
   height?: InputMaybe<Scalars['Float']>;
   /** Inline mutations for managing document localizations excluding the default locale */
@@ -3730,6 +4492,9 @@ export type AssetManyWhereInput = {
   documentInStages_every?: InputMaybe<AssetWhereStageInput>;
   documentInStages_none?: InputMaybe<AssetWhereStageInput>;
   documentInStages_some?: InputMaybe<AssetWhereStageInput>;
+  galleyPlace_every?: InputMaybe<PlaceWhereInput>;
+  galleyPlace_none?: InputMaybe<PlaceWhereInput>;
+  galleyPlace_some?: InputMaybe<PlaceWhereInput>;
   id?: InputMaybe<Scalars['ID']>;
   /** All values containing the given string. */
   id_contains?: InputMaybe<Scalars['ID']>;
@@ -3819,6 +4584,7 @@ export type AssetTransformationInput = {
 
 export type AssetUpdateInput = {
   fileName?: InputMaybe<Scalars['String']>;
+  galleyPlace?: InputMaybe<PlaceUpdateManyInlineInput>;
   handle?: InputMaybe<Scalars['String']>;
   height?: InputMaybe<Scalars['Float']>;
   /** Manage document localizations */
@@ -4000,6 +4766,9 @@ export type AssetWhereInput = {
   fileName_not_starts_with?: InputMaybe<Scalars['String']>;
   /** All values starting with the given string. */
   fileName_starts_with?: InputMaybe<Scalars['String']>;
+  galleyPlace_every?: InputMaybe<PlaceWhereInput>;
+  galleyPlace_none?: InputMaybe<PlaceWhereInput>;
+  galleyPlace_some?: InputMaybe<PlaceWhereInput>;
   handle?: InputMaybe<Scalars['String']>;
   /** All values containing the given string. */
   handle_contains?: InputMaybe<Scalars['String']>;
@@ -4314,6 +5083,8 @@ export type Mutation = {
   createAsset?: Maybe<Asset>;
   /** Create one page */
   createPage?: Maybe<Page>;
+  /** Create one place */
+  createPlace?: Maybe<Place>;
   /** Create one scheduledRelease */
   createScheduledRelease?: Maybe<ScheduledRelease>;
   /** Delete one asset from _all_ existing stages. Returns deleted document. */
@@ -4332,8 +5103,17 @@ export type Mutation = {
   deleteManyPages: BatchPayload;
   /** Delete many Page documents, return deleted documents */
   deleteManyPagesConnection: PageConnection;
+  /**
+   * Delete many Place documents
+   * @deprecated Please use the new paginated many mutation (deleteManyPlacesConnection)
+   */
+  deleteManyPlaces: BatchPayload;
+  /** Delete many Place documents, return deleted documents */
+  deleteManyPlacesConnection: PlaceConnection;
   /** Delete one page from _all_ existing stages. Returns deleted document. */
   deletePage?: Maybe<Page>;
+  /** Delete one place from _all_ existing stages. Returns deleted document. */
+  deletePlace?: Maybe<Place>;
   /** Delete and return scheduled operation */
   deleteScheduledOperation?: Maybe<ScheduledOperation>;
   /** Delete one scheduledRelease from _all_ existing stages. Returns deleted document. */
@@ -4354,16 +5134,29 @@ export type Mutation = {
   publishManyPages: BatchPayload;
   /** Publish many Page documents */
   publishManyPagesConnection: PageConnection;
+  /**
+   * Publish many Place documents
+   * @deprecated Please use the new paginated many mutation (publishManyPlacesConnection)
+   */
+  publishManyPlaces: BatchPayload;
+  /** Publish many Place documents */
+  publishManyPlacesConnection: PlaceConnection;
   /** Publish one page */
   publishPage?: Maybe<Page>;
+  /** Publish one place */
+  publishPlace?: Maybe<Place>;
   /** Schedule to publish one asset */
   schedulePublishAsset?: Maybe<Asset>;
   /** Schedule to publish one page */
   schedulePublishPage?: Maybe<Page>;
+  /** Schedule to publish one place */
+  schedulePublishPlace?: Maybe<Place>;
   /** Unpublish one asset from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
   scheduleUnpublishAsset?: Maybe<Asset>;
   /** Unpublish one page from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
   scheduleUnpublishPage?: Maybe<Page>;
+  /** Unpublish one place from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
+  scheduleUnpublishPlace?: Maybe<Place>;
   /** Unpublish one asset from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
   unpublishAsset?: Maybe<Asset>;
   /**
@@ -4380,8 +5173,17 @@ export type Mutation = {
   unpublishManyPages: BatchPayload;
   /** Find many Page documents that match criteria in specified stage and unpublish from target stages */
   unpublishManyPagesConnection: PageConnection;
+  /**
+   * Unpublish many Place documents
+   * @deprecated Please use the new paginated many mutation (unpublishManyPlacesConnection)
+   */
+  unpublishManyPlaces: BatchPayload;
+  /** Find many Place documents that match criteria in specified stage and unpublish from target stages */
+  unpublishManyPlacesConnection: PlaceConnection;
   /** Unpublish one page from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
   unpublishPage?: Maybe<Page>;
+  /** Unpublish one place from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
+  unpublishPlace?: Maybe<Place>;
   /** Update one asset */
   updateAsset?: Maybe<Asset>;
   /**
@@ -4398,14 +5200,25 @@ export type Mutation = {
   updateManyPages: BatchPayload;
   /** Update many Page documents */
   updateManyPagesConnection: PageConnection;
+  /**
+   * Update many places
+   * @deprecated Please use the new paginated many mutation (updateManyPlacesConnection)
+   */
+  updateManyPlaces: BatchPayload;
+  /** Update many Place documents */
+  updateManyPlacesConnection: PlaceConnection;
   /** Update one page */
   updatePage?: Maybe<Page>;
+  /** Update one place */
+  updatePlace?: Maybe<Place>;
   /** Update one scheduledRelease */
   updateScheduledRelease?: Maybe<ScheduledRelease>;
   /** Upsert one asset */
   upsertAsset?: Maybe<Asset>;
   /** Upsert one page */
   upsertPage?: Maybe<Page>;
+  /** Upsert one place */
+  upsertPlace?: Maybe<Place>;
 };
 
 
@@ -4416,6 +5229,11 @@ export type MutationCreateAssetArgs = {
 
 export type MutationCreatePageArgs = {
   data: PageCreateInput;
+};
+
+
+export type MutationCreatePlaceArgs = {
+  data: PlaceCreateInput;
 };
 
 
@@ -4459,8 +5277,28 @@ export type MutationDeleteManyPagesConnectionArgs = {
 };
 
 
+export type MutationDeleteManyPlacesArgs = {
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
+export type MutationDeleteManyPlacesConnectionArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
 export type MutationDeletePageArgs = {
   where: PageWhereUniqueInput;
+};
+
+
+export type MutationDeletePlaceArgs = {
+  where: PlaceWhereUniqueInput;
 };
 
 
@@ -4525,9 +5363,33 @@ export type MutationPublishManyPagesConnectionArgs = {
 };
 
 
+export type MutationPublishManyPlacesArgs = {
+  to?: Array<Stage>;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
+export type MutationPublishManyPlacesConnectionArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  from?: InputMaybe<Stage>;
+  last?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  to?: Array<Stage>;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
 export type MutationPublishPageArgs = {
   to?: Array<Stage>;
   where: PageWhereUniqueInput;
+};
+
+
+export type MutationPublishPlaceArgs = {
+  to?: Array<Stage>;
+  where: PlaceWhereUniqueInput;
 };
 
 
@@ -4550,6 +5412,14 @@ export type MutationSchedulePublishPageArgs = {
 };
 
 
+export type MutationSchedulePublishPlaceArgs = {
+  releaseAt?: InputMaybe<Scalars['DateTime']>;
+  releaseId?: InputMaybe<Scalars['String']>;
+  to?: Array<Stage>;
+  where: PlaceWhereUniqueInput;
+};
+
+
 export type MutationScheduleUnpublishAssetArgs = {
   from?: Array<Stage>;
   locales?: InputMaybe<Array<Locale>>;
@@ -4565,6 +5435,14 @@ export type MutationScheduleUnpublishPageArgs = {
   releaseAt?: InputMaybe<Scalars['DateTime']>;
   releaseId?: InputMaybe<Scalars['String']>;
   where: PageWhereUniqueInput;
+};
+
+
+export type MutationScheduleUnpublishPlaceArgs = {
+  from?: Array<Stage>;
+  releaseAt?: InputMaybe<Scalars['DateTime']>;
+  releaseId?: InputMaybe<Scalars['String']>;
+  where: PlaceWhereUniqueInput;
 };
 
 
@@ -4616,9 +5494,33 @@ export type MutationUnpublishManyPagesConnectionArgs = {
 };
 
 
+export type MutationUnpublishManyPlacesArgs = {
+  from?: Array<Stage>;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
+export type MutationUnpublishManyPlacesConnectionArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  from?: Array<Stage>;
+  last?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  stage?: InputMaybe<Stage>;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
 export type MutationUnpublishPageArgs = {
   from?: Array<Stage>;
   where: PageWhereUniqueInput;
+};
+
+
+export type MutationUnpublishPlaceArgs = {
+  from?: Array<Stage>;
+  where: PlaceWhereUniqueInput;
 };
 
 
@@ -4662,9 +5564,32 @@ export type MutationUpdateManyPagesConnectionArgs = {
 };
 
 
+export type MutationUpdateManyPlacesArgs = {
+  data: PlaceUpdateManyInput;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
+export type MutationUpdateManyPlacesConnectionArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  data: PlaceUpdateManyInput;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<PlaceManyWhereInput>;
+};
+
+
 export type MutationUpdatePageArgs = {
   data: PageUpdateInput;
   where: PageWhereUniqueInput;
+};
+
+
+export type MutationUpdatePlaceArgs = {
+  data: PlaceUpdateInput;
+  where: PlaceWhereUniqueInput;
 };
 
 
@@ -4683,6 +5608,12 @@ export type MutationUpsertAssetArgs = {
 export type MutationUpsertPageArgs = {
   upsert: PageUpsertInput;
   where: PageWhereUniqueInput;
+};
+
+
+export type MutationUpsertPlaceArgs = {
+  upsert: PlaceUpsertInput;
+  where: PlaceWhereUniqueInput;
 };
 
 /** An object with an ID */
@@ -5182,6 +6113,504 @@ export type PageWhereUniqueInput = {
   slug?: InputMaybe<Scalars['String']>;
 };
 
+export type Place = Node & {
+  __typename?: 'Place';
+  /** The time the document was created */
+  createdAt: Scalars['DateTime'];
+  /** User that created this document */
+  createdBy?: Maybe<User>;
+  description?: Maybe<RichText>;
+  /** Get the document in other stages */
+  documentInStages: Array<Place>;
+  galley: Array<Asset>;
+  /** List of Place versions */
+  history: Array<Version>;
+  /** The unique identifier */
+  id: Scalars['ID'];
+  location: Location;
+  name: Scalars['String'];
+  /** The time the document was published. Null on documents in draft stage. */
+  publishedAt?: Maybe<Scalars['DateTime']>;
+  /** User that last published this document */
+  publishedBy?: Maybe<User>;
+  scheduledIn: Array<ScheduledOperation>;
+  slug: Scalars['String'];
+  /** System stage field */
+  stage: Stage;
+  /** The time the document was updated */
+  updatedAt: Scalars['DateTime'];
+  /** User that last updated this document */
+  updatedBy?: Maybe<User>;
+};
+
+
+export type PlaceCreatedByArgs = {
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+
+export type PlaceDocumentInStagesArgs = {
+  includeCurrent?: Scalars['Boolean'];
+  inheritLocale?: Scalars['Boolean'];
+  stages?: Array<Stage>;
+};
+
+
+export type PlaceGalleyArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: InputMaybe<Array<Locale>>;
+  orderBy?: InputMaybe<AssetOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<AssetWhereInput>;
+};
+
+
+export type PlaceHistoryArgs = {
+  limit?: Scalars['Int'];
+  skip?: Scalars['Int'];
+  stageOverride?: InputMaybe<Stage>;
+};
+
+
+export type PlacePublishedByArgs = {
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+
+export type PlaceScheduledInArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: InputMaybe<Array<Locale>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ScheduledOperationWhereInput>;
+};
+
+
+export type PlaceUpdatedByArgs = {
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+export type PlaceConnectInput = {
+  /** Allow to specify document position in list of connected documents, will default to appending at end of list */
+  position?: InputMaybe<ConnectPositionInput>;
+  /** Document to connect */
+  where: PlaceWhereUniqueInput;
+};
+
+/** A connection to a list of items. */
+export type PlaceConnection = {
+  __typename?: 'PlaceConnection';
+  aggregate: Aggregate;
+  /** A list of edges. */
+  edges: Array<PlaceEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+export type PlaceCreateInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  description?: InputMaybe<Scalars['RichTextAST']>;
+  galley: AssetCreateManyInlineInput;
+  location: LocationInput;
+  name: Scalars['String'];
+  slug: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PlaceCreateManyInlineInput = {
+  /** Connect multiple existing Place documents */
+  connect?: InputMaybe<Array<PlaceWhereUniqueInput>>;
+  /** Create and connect multiple existing Place documents */
+  create?: InputMaybe<Array<PlaceCreateInput>>;
+};
+
+export type PlaceCreateOneInlineInput = {
+  /** Connect one existing Place document */
+  connect?: InputMaybe<PlaceWhereUniqueInput>;
+  /** Create and connect one Place document */
+  create?: InputMaybe<PlaceCreateInput>;
+};
+
+/** An edge in a connection. */
+export type PlaceEdge = {
+  __typename?: 'PlaceEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: Place;
+};
+
+/** Identifies documents */
+export type PlaceManyWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: InputMaybe<Array<PlaceWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: InputMaybe<Array<PlaceWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: InputMaybe<Array<PlaceWhereInput>>;
+  /** Contains search across all appropriate fields. */
+  _search?: InputMaybe<Scalars['String']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  createdAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  createdAt_gte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  createdAt_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  /** All values less than the given value. */
+  createdAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  createdAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  createdAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not contained in given list. */
+  createdAt_not_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  createdBy?: InputMaybe<UserWhereInput>;
+  documentInStages_every?: InputMaybe<PlaceWhereStageInput>;
+  documentInStages_none?: InputMaybe<PlaceWhereStageInput>;
+  documentInStages_some?: InputMaybe<PlaceWhereStageInput>;
+  galley_every?: InputMaybe<AssetWhereInput>;
+  galley_none?: InputMaybe<AssetWhereInput>;
+  galley_some?: InputMaybe<AssetWhereInput>;
+  id?: InputMaybe<Scalars['ID']>;
+  /** All values containing the given string. */
+  id_contains?: InputMaybe<Scalars['ID']>;
+  /** All values ending with the given string. */
+  id_ends_with?: InputMaybe<Scalars['ID']>;
+  /** All values that are contained in given list. */
+  id_in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** All values that are not equal to given value. */
+  id_not?: InputMaybe<Scalars['ID']>;
+  /** All values not containing the given string. */
+  id_not_contains?: InputMaybe<Scalars['ID']>;
+  /** All values not ending with the given string */
+  id_not_ends_with?: InputMaybe<Scalars['ID']>;
+  /** All values that are not contained in given list. */
+  id_not_in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** All values not starting with the given string. */
+  id_not_starts_with?: InputMaybe<Scalars['ID']>;
+  /** All values starting with the given string. */
+  id_starts_with?: InputMaybe<Scalars['ID']>;
+  name?: InputMaybe<Scalars['String']>;
+  /** All values containing the given string. */
+  name_contains?: InputMaybe<Scalars['String']>;
+  /** All values ending with the given string. */
+  name_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are contained in given list. */
+  name_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values that are not equal to given value. */
+  name_not?: InputMaybe<Scalars['String']>;
+  /** All values not containing the given string. */
+  name_not_contains?: InputMaybe<Scalars['String']>;
+  /** All values not ending with the given string */
+  name_not_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are not contained in given list. */
+  name_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values not starting with the given string. */
+  name_not_starts_with?: InputMaybe<Scalars['String']>;
+  /** All values starting with the given string. */
+  name_starts_with?: InputMaybe<Scalars['String']>;
+  publishedAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  publishedAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  publishedAt_gte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  publishedAt_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  /** All values less than the given value. */
+  publishedAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  publishedAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  publishedAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not contained in given list. */
+  publishedAt_not_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  publishedBy?: InputMaybe<UserWhereInput>;
+  scheduledIn_every?: InputMaybe<ScheduledOperationWhereInput>;
+  scheduledIn_none?: InputMaybe<ScheduledOperationWhereInput>;
+  scheduledIn_some?: InputMaybe<ScheduledOperationWhereInput>;
+  slug?: InputMaybe<Scalars['String']>;
+  /** All values containing the given string. */
+  slug_contains?: InputMaybe<Scalars['String']>;
+  /** All values ending with the given string. */
+  slug_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are contained in given list. */
+  slug_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values that are not equal to given value. */
+  slug_not?: InputMaybe<Scalars['String']>;
+  /** All values not containing the given string. */
+  slug_not_contains?: InputMaybe<Scalars['String']>;
+  /** All values not ending with the given string */
+  slug_not_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are not contained in given list. */
+  slug_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values not starting with the given string. */
+  slug_not_starts_with?: InputMaybe<Scalars['String']>;
+  /** All values starting with the given string. */
+  slug_starts_with?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  updatedAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  updatedAt_gte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  updatedAt_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  /** All values less than the given value. */
+  updatedAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  updatedAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  updatedAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not contained in given list. */
+  updatedAt_not_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  updatedBy?: InputMaybe<UserWhereInput>;
+};
+
+export enum PlaceOrderByInput {
+  CreatedAtAsc = 'createdAt_ASC',
+  CreatedAtDesc = 'createdAt_DESC',
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  NameAsc = 'name_ASC',
+  NameDesc = 'name_DESC',
+  PublishedAtAsc = 'publishedAt_ASC',
+  PublishedAtDesc = 'publishedAt_DESC',
+  SlugAsc = 'slug_ASC',
+  SlugDesc = 'slug_DESC',
+  UpdatedAtAsc = 'updatedAt_ASC',
+  UpdatedAtDesc = 'updatedAt_DESC'
+}
+
+export type PlaceUpdateInput = {
+  description?: InputMaybe<Scalars['RichTextAST']>;
+  galley?: InputMaybe<AssetUpdateManyInlineInput>;
+  location?: InputMaybe<LocationInput>;
+  name?: InputMaybe<Scalars['String']>;
+  slug?: InputMaybe<Scalars['String']>;
+};
+
+export type PlaceUpdateManyInlineInput = {
+  /** Connect multiple existing Place documents */
+  connect?: InputMaybe<Array<PlaceConnectInput>>;
+  /** Create and connect multiple Place documents */
+  create?: InputMaybe<Array<PlaceCreateInput>>;
+  /** Delete multiple Place documents */
+  delete?: InputMaybe<Array<PlaceWhereUniqueInput>>;
+  /** Disconnect multiple Place documents */
+  disconnect?: InputMaybe<Array<PlaceWhereUniqueInput>>;
+  /** Override currently-connected documents with multiple existing Place documents */
+  set?: InputMaybe<Array<PlaceWhereUniqueInput>>;
+  /** Update multiple Place documents */
+  update?: InputMaybe<Array<PlaceUpdateWithNestedWhereUniqueInput>>;
+  /** Upsert multiple Place documents */
+  upsert?: InputMaybe<Array<PlaceUpsertWithNestedWhereUniqueInput>>;
+};
+
+export type PlaceUpdateManyInput = {
+  description?: InputMaybe<Scalars['RichTextAST']>;
+  name?: InputMaybe<Scalars['String']>;
+};
+
+export type PlaceUpdateManyWithNestedWhereInput = {
+  /** Update many input */
+  data: PlaceUpdateManyInput;
+  /** Document search */
+  where: PlaceWhereInput;
+};
+
+export type PlaceUpdateOneInlineInput = {
+  /** Connect existing Place document */
+  connect?: InputMaybe<PlaceWhereUniqueInput>;
+  /** Create and connect one Place document */
+  create?: InputMaybe<PlaceCreateInput>;
+  /** Delete currently connected Place document */
+  delete?: InputMaybe<Scalars['Boolean']>;
+  /** Disconnect currently connected Place document */
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+  /** Update single Place document */
+  update?: InputMaybe<PlaceUpdateWithNestedWhereUniqueInput>;
+  /** Upsert single Place document */
+  upsert?: InputMaybe<PlaceUpsertWithNestedWhereUniqueInput>;
+};
+
+export type PlaceUpdateWithNestedWhereUniqueInput = {
+  /** Document to update */
+  data: PlaceUpdateInput;
+  /** Unique document search */
+  where: PlaceWhereUniqueInput;
+};
+
+export type PlaceUpsertInput = {
+  /** Create document if it didn't exist */
+  create: PlaceCreateInput;
+  /** Update document if it exists */
+  update: PlaceUpdateInput;
+};
+
+export type PlaceUpsertWithNestedWhereUniqueInput = {
+  /** Upsert data */
+  data: PlaceUpsertInput;
+  /** Unique document search */
+  where: PlaceWhereUniqueInput;
+};
+
+/** This contains a set of filters that can be used to compare values internally */
+export type PlaceWhereComparatorInput = {
+  /** This field can be used to request to check if the entry is outdated by internal comparison */
+  outdated_to?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Identifies documents */
+export type PlaceWhereInput = {
+  /** Logical AND on all given filters. */
+  AND?: InputMaybe<Array<PlaceWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: InputMaybe<Array<PlaceWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: InputMaybe<Array<PlaceWhereInput>>;
+  /** Contains search across all appropriate fields. */
+  _search?: InputMaybe<Scalars['String']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  createdAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  createdAt_gte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  createdAt_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  /** All values less than the given value. */
+  createdAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  createdAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  createdAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not contained in given list. */
+  createdAt_not_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  createdBy?: InputMaybe<UserWhereInput>;
+  documentInStages_every?: InputMaybe<PlaceWhereStageInput>;
+  documentInStages_none?: InputMaybe<PlaceWhereStageInput>;
+  documentInStages_some?: InputMaybe<PlaceWhereStageInput>;
+  galley_every?: InputMaybe<AssetWhereInput>;
+  galley_none?: InputMaybe<AssetWhereInput>;
+  galley_some?: InputMaybe<AssetWhereInput>;
+  id?: InputMaybe<Scalars['ID']>;
+  /** All values containing the given string. */
+  id_contains?: InputMaybe<Scalars['ID']>;
+  /** All values ending with the given string. */
+  id_ends_with?: InputMaybe<Scalars['ID']>;
+  /** All values that are contained in given list. */
+  id_in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** All values that are not equal to given value. */
+  id_not?: InputMaybe<Scalars['ID']>;
+  /** All values not containing the given string. */
+  id_not_contains?: InputMaybe<Scalars['ID']>;
+  /** All values not ending with the given string */
+  id_not_ends_with?: InputMaybe<Scalars['ID']>;
+  /** All values that are not contained in given list. */
+  id_not_in?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  /** All values not starting with the given string. */
+  id_not_starts_with?: InputMaybe<Scalars['ID']>;
+  /** All values starting with the given string. */
+  id_starts_with?: InputMaybe<Scalars['ID']>;
+  name?: InputMaybe<Scalars['String']>;
+  /** All values containing the given string. */
+  name_contains?: InputMaybe<Scalars['String']>;
+  /** All values ending with the given string. */
+  name_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are contained in given list. */
+  name_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values that are not equal to given value. */
+  name_not?: InputMaybe<Scalars['String']>;
+  /** All values not containing the given string. */
+  name_not_contains?: InputMaybe<Scalars['String']>;
+  /** All values not ending with the given string */
+  name_not_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are not contained in given list. */
+  name_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values not starting with the given string. */
+  name_not_starts_with?: InputMaybe<Scalars['String']>;
+  /** All values starting with the given string. */
+  name_starts_with?: InputMaybe<Scalars['String']>;
+  publishedAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  publishedAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  publishedAt_gte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  publishedAt_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  /** All values less than the given value. */
+  publishedAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  publishedAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  publishedAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not contained in given list. */
+  publishedAt_not_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  publishedBy?: InputMaybe<UserWhereInput>;
+  scheduledIn_every?: InputMaybe<ScheduledOperationWhereInput>;
+  scheduledIn_none?: InputMaybe<ScheduledOperationWhereInput>;
+  scheduledIn_some?: InputMaybe<ScheduledOperationWhereInput>;
+  slug?: InputMaybe<Scalars['String']>;
+  /** All values containing the given string. */
+  slug_contains?: InputMaybe<Scalars['String']>;
+  /** All values ending with the given string. */
+  slug_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are contained in given list. */
+  slug_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values that are not equal to given value. */
+  slug_not?: InputMaybe<Scalars['String']>;
+  /** All values not containing the given string. */
+  slug_not_contains?: InputMaybe<Scalars['String']>;
+  /** All values not ending with the given string */
+  slug_not_ends_with?: InputMaybe<Scalars['String']>;
+  /** All values that are not contained in given list. */
+  slug_not_in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  /** All values not starting with the given string. */
+  slug_not_starts_with?: InputMaybe<Scalars['String']>;
+  /** All values starting with the given string. */
+  slug_starts_with?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  updatedAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  updatedAt_gte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  updatedAt_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  /** All values less than the given value. */
+  updatedAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  updatedAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  updatedAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not contained in given list. */
+  updatedAt_not_in?: InputMaybe<Array<InputMaybe<Scalars['DateTime']>>>;
+  updatedBy?: InputMaybe<UserWhereInput>;
+};
+
+/** The document in stages filter allows specifying a stage entry to cross compare the same document between different stages */
+export type PlaceWhereStageInput = {
+  /** Logical AND on all given filters. */
+  AND?: InputMaybe<Array<PlaceWhereStageInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: InputMaybe<Array<PlaceWhereStageInput>>;
+  /** Logical OR on all given filters. */
+  OR?: InputMaybe<Array<PlaceWhereStageInput>>;
+  /** This field contains fields which can be set as true or false to specify an internal comparison */
+  compareWithParent?: InputMaybe<PlaceWhereComparatorInput>;
+  /** Specify the stage to compare with */
+  stage?: InputMaybe<Stage>;
+};
+
+/** References Place record uniquely */
+export type PlaceWhereUniqueInput = {
+  id?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
+};
+
 export type PublishLocaleInput = {
   /** Locales to publish */
   locale: Locale;
@@ -5209,6 +6638,14 @@ export type Query = {
   pages: Array<Page>;
   /** Retrieve multiple pages using the Relay connection interface */
   pagesConnection: PageConnection;
+  /** Retrieve a single place */
+  place?: Maybe<Place>;
+  /** Retrieve document version */
+  placeVersion?: Maybe<DocumentVersion>;
+  /** Retrieve multiple places */
+  places: Array<Place>;
+  /** Retrieve multiple places using the Relay connection interface */
+  placesConnection: PlaceConnection;
   /** Retrieve a single scheduledOperation */
   scheduledOperation?: Maybe<ScheduledOperation>;
   /** Retrieve multiple scheduledOperations */
@@ -5310,6 +6747,44 @@ export type QueryPagesConnectionArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   stage?: Stage;
   where?: InputMaybe<PageWhereInput>;
+};
+
+
+export type QueryPlaceArgs = {
+  locales?: Array<Locale>;
+  stage?: Stage;
+  where: PlaceWhereUniqueInput;
+};
+
+
+export type QueryPlaceVersionArgs = {
+  where: VersionWhereInput;
+};
+
+
+export type QueryPlacesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: Array<Locale>;
+  orderBy?: InputMaybe<PlaceOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  stage?: Stage;
+  where?: InputMaybe<PlaceWhereInput>;
+};
+
+
+export type QueryPlacesConnectionArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: Array<Locale>;
+  orderBy?: InputMaybe<PlaceOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  stage?: Stage;
+  where?: InputMaybe<PlaceWhereInput>;
 };
 
 
@@ -5518,7 +6993,7 @@ export type ScheduledOperationUpdatedByArgs = {
   locales?: InputMaybe<Array<Locale>>;
 };
 
-export type ScheduledOperationAffectedDocument = Asset | Page;
+export type ScheduledOperationAffectedDocument = Asset | Page | Place;
 
 export type ScheduledOperationConnectInput = {
   /** Allow to specify document position in list of connected documents, will default to appending at end of list */
@@ -6947,3 +8422,849 @@ export type GetPageBySlugQueryVariables = Exact<{
 
 
 export type GetPageBySlugQuery = { __typename?: 'Query', page?: { __typename?: 'Page', id: string, slug: string, heading: string, body: { __typename?: 'RichText', html: string } } | null };
+
+export type GetPlacesQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetPlacesQuery = { __typename?: 'Query', places: Array<{ __typename?: 'Place', id: string, slug: string, name: string, location: { __typename?: 'Location', latitude: number, longitude: number }, description?: { __typename?: 'RichText', html: string } | null, galley: Array<{ __typename?: 'Asset', url: string, height?: number | null, width?: number | null }> }> };
+
+export type GetPlaceBySlugQueryVariables = Exact<{
+  slug: Scalars['String'];
+}>;
+
+
+export type GetPlaceBySlugQuery = { __typename?: 'Query', place?: { __typename?: 'Place', id: string, slug: string, name: string, location: { __typename?: 'Location', latitude: number, longitude: number }, description?: { __typename?: 'RichText', html: string } | null, galley: Array<{ __typename?: 'Asset', url: string, height?: number | null, width?: number | null }> } | null };
+
+
+
+export type ResolverTypeWrapper<T> = Promise<T> | T;
+
+
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+};
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
+
+export type ResolverFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Promise<TResult> | TResult;
+
+export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
+
+export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => TResult | Promise<TResult>;
+
+export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
+  subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;
+  resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;
+}
+
+export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
+  subscribe: SubscriptionSubscribeFn<any, TParent, TContext, TArgs>;
+  resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>;
+}
+
+export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, TArgs> =
+  | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
+  | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
+
+export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
+  | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
+  | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
+
+export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
+  parent: TParent,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
+
+export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+
+export type NextResolverFn<T> = () => Promise<T>;
+
+export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (
+  next: NextResolverFn<TResult>,
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => TResult | Promise<TResult>;
+
+/** Mapping between all available schema types and the resolvers types */
+export type ResolversTypes = {
+  Aggregate: ResolverTypeWrapper<Aggregate>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  Asset: ResolverTypeWrapper<Asset>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  String: ResolverTypeWrapper<Scalars['String']>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
+  AssetConnectInput: AssetConnectInput;
+  AssetConnection: ResolverTypeWrapper<AssetConnection>;
+  AssetCreateInput: AssetCreateInput;
+  AssetCreateLocalizationDataInput: AssetCreateLocalizationDataInput;
+  AssetCreateLocalizationInput: AssetCreateLocalizationInput;
+  AssetCreateLocalizationsInput: AssetCreateLocalizationsInput;
+  AssetCreateManyInlineInput: AssetCreateManyInlineInput;
+  AssetCreateOneInlineInput: AssetCreateOneInlineInput;
+  AssetEdge: ResolverTypeWrapper<AssetEdge>;
+  AssetManyWhereInput: AssetManyWhereInput;
+  AssetOrderByInput: AssetOrderByInput;
+  AssetTransformationInput: AssetTransformationInput;
+  AssetUpdateInput: AssetUpdateInput;
+  AssetUpdateLocalizationDataInput: AssetUpdateLocalizationDataInput;
+  AssetUpdateLocalizationInput: AssetUpdateLocalizationInput;
+  AssetUpdateLocalizationsInput: AssetUpdateLocalizationsInput;
+  AssetUpdateManyInlineInput: AssetUpdateManyInlineInput;
+  AssetUpdateManyInput: AssetUpdateManyInput;
+  AssetUpdateManyLocalizationDataInput: AssetUpdateManyLocalizationDataInput;
+  AssetUpdateManyLocalizationInput: AssetUpdateManyLocalizationInput;
+  AssetUpdateManyLocalizationsInput: AssetUpdateManyLocalizationsInput;
+  AssetUpdateManyWithNestedWhereInput: AssetUpdateManyWithNestedWhereInput;
+  AssetUpdateOneInlineInput: AssetUpdateOneInlineInput;
+  AssetUpdateWithNestedWhereUniqueInput: AssetUpdateWithNestedWhereUniqueInput;
+  AssetUpsertInput: AssetUpsertInput;
+  AssetUpsertLocalizationInput: AssetUpsertLocalizationInput;
+  AssetUpsertWithNestedWhereUniqueInput: AssetUpsertWithNestedWhereUniqueInput;
+  AssetWhereComparatorInput: AssetWhereComparatorInput;
+  AssetWhereInput: AssetWhereInput;
+  AssetWhereStageInput: AssetWhereStageInput;
+  AssetWhereUniqueInput: AssetWhereUniqueInput;
+  BatchPayload: ResolverTypeWrapper<BatchPayload>;
+  Color: ResolverTypeWrapper<Color>;
+  ColorInput: ColorInput;
+  ConnectPositionInput: ConnectPositionInput;
+  Date: ResolverTypeWrapper<Scalars['Date']>;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  DocumentFileTypes: DocumentFileTypes;
+  DocumentOutputInput: DocumentOutputInput;
+  DocumentTransformationInput: DocumentTransformationInput;
+  DocumentVersion: ResolverTypeWrapper<DocumentVersion>;
+  Hex: ResolverTypeWrapper<Scalars['Hex']>;
+  ImageFit: ImageFit;
+  ImageResizeInput: ImageResizeInput;
+  ImageTransformationInput: ImageTransformationInput;
+  Json: ResolverTypeWrapper<Scalars['Json']>;
+  Locale: Locale;
+  Location: ResolverTypeWrapper<Location>;
+  LocationInput: LocationInput;
+  Long: ResolverTypeWrapper<Scalars['Long']>;
+  Mutation: ResolverTypeWrapper<{}>;
+  Node: ResolversTypes['Asset'] | ResolversTypes['Page'] | ResolversTypes['Place'] | ResolversTypes['ScheduledOperation'] | ResolversTypes['ScheduledRelease'] | ResolversTypes['User'];
+  Page: ResolverTypeWrapper<Page>;
+  PageConnectInput: PageConnectInput;
+  PageConnection: ResolverTypeWrapper<PageConnection>;
+  PageCreateInput: PageCreateInput;
+  PageCreateManyInlineInput: PageCreateManyInlineInput;
+  PageCreateOneInlineInput: PageCreateOneInlineInput;
+  PageEdge: ResolverTypeWrapper<PageEdge>;
+  PageInfo: ResolverTypeWrapper<PageInfo>;
+  PageManyWhereInput: PageManyWhereInput;
+  PageOrderByInput: PageOrderByInput;
+  PageUpdateInput: PageUpdateInput;
+  PageUpdateManyInlineInput: PageUpdateManyInlineInput;
+  PageUpdateManyInput: PageUpdateManyInput;
+  PageUpdateManyWithNestedWhereInput: PageUpdateManyWithNestedWhereInput;
+  PageUpdateOneInlineInput: PageUpdateOneInlineInput;
+  PageUpdateWithNestedWhereUniqueInput: PageUpdateWithNestedWhereUniqueInput;
+  PageUpsertInput: PageUpsertInput;
+  PageUpsertWithNestedWhereUniqueInput: PageUpsertWithNestedWhereUniqueInput;
+  PageWhereComparatorInput: PageWhereComparatorInput;
+  PageWhereInput: PageWhereInput;
+  PageWhereStageInput: PageWhereStageInput;
+  PageWhereUniqueInput: PageWhereUniqueInput;
+  Place: ResolverTypeWrapper<Place>;
+  PlaceConnectInput: PlaceConnectInput;
+  PlaceConnection: ResolverTypeWrapper<PlaceConnection>;
+  PlaceCreateInput: PlaceCreateInput;
+  PlaceCreateManyInlineInput: PlaceCreateManyInlineInput;
+  PlaceCreateOneInlineInput: PlaceCreateOneInlineInput;
+  PlaceEdge: ResolverTypeWrapper<PlaceEdge>;
+  PlaceManyWhereInput: PlaceManyWhereInput;
+  PlaceOrderByInput: PlaceOrderByInput;
+  PlaceUpdateInput: PlaceUpdateInput;
+  PlaceUpdateManyInlineInput: PlaceUpdateManyInlineInput;
+  PlaceUpdateManyInput: PlaceUpdateManyInput;
+  PlaceUpdateManyWithNestedWhereInput: PlaceUpdateManyWithNestedWhereInput;
+  PlaceUpdateOneInlineInput: PlaceUpdateOneInlineInput;
+  PlaceUpdateWithNestedWhereUniqueInput: PlaceUpdateWithNestedWhereUniqueInput;
+  PlaceUpsertInput: PlaceUpsertInput;
+  PlaceUpsertWithNestedWhereUniqueInput: PlaceUpsertWithNestedWhereUniqueInput;
+  PlaceWhereComparatorInput: PlaceWhereComparatorInput;
+  PlaceWhereInput: PlaceWhereInput;
+  PlaceWhereStageInput: PlaceWhereStageInput;
+  PlaceWhereUniqueInput: PlaceWhereUniqueInput;
+  PublishLocaleInput: PublishLocaleInput;
+  Query: ResolverTypeWrapper<{}>;
+  RGBA: ResolverTypeWrapper<Rgba>;
+  RGBAHue: ResolverTypeWrapper<Scalars['RGBAHue']>;
+  RGBAInput: RgbaInput;
+  RGBATransparency: ResolverTypeWrapper<Scalars['RGBATransparency']>;
+  RichText: ResolverTypeWrapper<RichText>;
+  RichTextAST: ResolverTypeWrapper<Scalars['RichTextAST']>;
+  ScheduledOperation: ResolverTypeWrapper<Omit<ScheduledOperation, 'affectedDocuments'> & { affectedDocuments: Array<ResolversTypes['ScheduledOperationAffectedDocument']> }>;
+  ScheduledOperationAffectedDocument: ResolversTypes['Asset'] | ResolversTypes['Page'] | ResolversTypes['Place'];
+  ScheduledOperationConnectInput: ScheduledOperationConnectInput;
+  ScheduledOperationConnection: ResolverTypeWrapper<ScheduledOperationConnection>;
+  ScheduledOperationCreateManyInlineInput: ScheduledOperationCreateManyInlineInput;
+  ScheduledOperationCreateOneInlineInput: ScheduledOperationCreateOneInlineInput;
+  ScheduledOperationEdge: ResolverTypeWrapper<ScheduledOperationEdge>;
+  ScheduledOperationManyWhereInput: ScheduledOperationManyWhereInput;
+  ScheduledOperationOrderByInput: ScheduledOperationOrderByInput;
+  ScheduledOperationStatus: ScheduledOperationStatus;
+  ScheduledOperationUpdateManyInlineInput: ScheduledOperationUpdateManyInlineInput;
+  ScheduledOperationUpdateOneInlineInput: ScheduledOperationUpdateOneInlineInput;
+  ScheduledOperationWhereInput: ScheduledOperationWhereInput;
+  ScheduledOperationWhereUniqueInput: ScheduledOperationWhereUniqueInput;
+  ScheduledRelease: ResolverTypeWrapper<ScheduledRelease>;
+  ScheduledReleaseConnectInput: ScheduledReleaseConnectInput;
+  ScheduledReleaseConnection: ResolverTypeWrapper<ScheduledReleaseConnection>;
+  ScheduledReleaseCreateInput: ScheduledReleaseCreateInput;
+  ScheduledReleaseCreateManyInlineInput: ScheduledReleaseCreateManyInlineInput;
+  ScheduledReleaseCreateOneInlineInput: ScheduledReleaseCreateOneInlineInput;
+  ScheduledReleaseEdge: ResolverTypeWrapper<ScheduledReleaseEdge>;
+  ScheduledReleaseManyWhereInput: ScheduledReleaseManyWhereInput;
+  ScheduledReleaseOrderByInput: ScheduledReleaseOrderByInput;
+  ScheduledReleaseStatus: ScheduledReleaseStatus;
+  ScheduledReleaseUpdateInput: ScheduledReleaseUpdateInput;
+  ScheduledReleaseUpdateManyInlineInput: ScheduledReleaseUpdateManyInlineInput;
+  ScheduledReleaseUpdateManyInput: ScheduledReleaseUpdateManyInput;
+  ScheduledReleaseUpdateManyWithNestedWhereInput: ScheduledReleaseUpdateManyWithNestedWhereInput;
+  ScheduledReleaseUpdateOneInlineInput: ScheduledReleaseUpdateOneInlineInput;
+  ScheduledReleaseUpdateWithNestedWhereUniqueInput: ScheduledReleaseUpdateWithNestedWhereUniqueInput;
+  ScheduledReleaseUpsertInput: ScheduledReleaseUpsertInput;
+  ScheduledReleaseUpsertWithNestedWhereUniqueInput: ScheduledReleaseUpsertWithNestedWhereUniqueInput;
+  ScheduledReleaseWhereInput: ScheduledReleaseWhereInput;
+  ScheduledReleaseWhereUniqueInput: ScheduledReleaseWhereUniqueInput;
+  Stage: Stage;
+  SystemDateTimeFieldVariation: SystemDateTimeFieldVariation;
+  UnpublishLocaleInput: UnpublishLocaleInput;
+  User: ResolverTypeWrapper<User>;
+  UserConnectInput: UserConnectInput;
+  UserConnection: ResolverTypeWrapper<UserConnection>;
+  UserCreateManyInlineInput: UserCreateManyInlineInput;
+  UserCreateOneInlineInput: UserCreateOneInlineInput;
+  UserEdge: ResolverTypeWrapper<UserEdge>;
+  UserKind: UserKind;
+  UserManyWhereInput: UserManyWhereInput;
+  UserOrderByInput: UserOrderByInput;
+  UserUpdateManyInlineInput: UserUpdateManyInlineInput;
+  UserUpdateOneInlineInput: UserUpdateOneInlineInput;
+  UserWhereComparatorInput: UserWhereComparatorInput;
+  UserWhereInput: UserWhereInput;
+  UserWhereStageInput: UserWhereStageInput;
+  UserWhereUniqueInput: UserWhereUniqueInput;
+  Version: ResolverTypeWrapper<Version>;
+  VersionWhereInput: VersionWhereInput;
+  _FilterKind: _FilterKind;
+  _MutationInputFieldKind: _MutationInputFieldKind;
+  _MutationKind: _MutationKind;
+  _OrderDirection: _OrderDirection;
+  _RelationInputCardinality: _RelationInputCardinality;
+  _RelationInputKind: _RelationInputKind;
+  _RelationKind: _RelationKind;
+  _SystemDateTimeFieldVariation: _SystemDateTimeFieldVariation;
+};
+
+/** Mapping between all available schema types and the resolvers parents */
+export type ResolversParentTypes = {
+  Aggregate: Aggregate;
+  Int: Scalars['Int'];
+  Asset: Asset;
+  Boolean: Scalars['Boolean'];
+  String: Scalars['String'];
+  Float: Scalars['Float'];
+  ID: Scalars['ID'];
+  AssetConnectInput: AssetConnectInput;
+  AssetConnection: AssetConnection;
+  AssetCreateInput: AssetCreateInput;
+  AssetCreateLocalizationDataInput: AssetCreateLocalizationDataInput;
+  AssetCreateLocalizationInput: AssetCreateLocalizationInput;
+  AssetCreateLocalizationsInput: AssetCreateLocalizationsInput;
+  AssetCreateManyInlineInput: AssetCreateManyInlineInput;
+  AssetCreateOneInlineInput: AssetCreateOneInlineInput;
+  AssetEdge: AssetEdge;
+  AssetManyWhereInput: AssetManyWhereInput;
+  AssetTransformationInput: AssetTransformationInput;
+  AssetUpdateInput: AssetUpdateInput;
+  AssetUpdateLocalizationDataInput: AssetUpdateLocalizationDataInput;
+  AssetUpdateLocalizationInput: AssetUpdateLocalizationInput;
+  AssetUpdateLocalizationsInput: AssetUpdateLocalizationsInput;
+  AssetUpdateManyInlineInput: AssetUpdateManyInlineInput;
+  AssetUpdateManyInput: AssetUpdateManyInput;
+  AssetUpdateManyLocalizationDataInput: AssetUpdateManyLocalizationDataInput;
+  AssetUpdateManyLocalizationInput: AssetUpdateManyLocalizationInput;
+  AssetUpdateManyLocalizationsInput: AssetUpdateManyLocalizationsInput;
+  AssetUpdateManyWithNestedWhereInput: AssetUpdateManyWithNestedWhereInput;
+  AssetUpdateOneInlineInput: AssetUpdateOneInlineInput;
+  AssetUpdateWithNestedWhereUniqueInput: AssetUpdateWithNestedWhereUniqueInput;
+  AssetUpsertInput: AssetUpsertInput;
+  AssetUpsertLocalizationInput: AssetUpsertLocalizationInput;
+  AssetUpsertWithNestedWhereUniqueInput: AssetUpsertWithNestedWhereUniqueInput;
+  AssetWhereComparatorInput: AssetWhereComparatorInput;
+  AssetWhereInput: AssetWhereInput;
+  AssetWhereStageInput: AssetWhereStageInput;
+  AssetWhereUniqueInput: AssetWhereUniqueInput;
+  BatchPayload: BatchPayload;
+  Color: Color;
+  ColorInput: ColorInput;
+  ConnectPositionInput: ConnectPositionInput;
+  Date: Scalars['Date'];
+  DateTime: Scalars['DateTime'];
+  DocumentOutputInput: DocumentOutputInput;
+  DocumentTransformationInput: DocumentTransformationInput;
+  DocumentVersion: DocumentVersion;
+  Hex: Scalars['Hex'];
+  ImageResizeInput: ImageResizeInput;
+  ImageTransformationInput: ImageTransformationInput;
+  Json: Scalars['Json'];
+  Location: Location;
+  LocationInput: LocationInput;
+  Long: Scalars['Long'];
+  Mutation: {};
+  Node: ResolversParentTypes['Asset'] | ResolversParentTypes['Page'] | ResolversParentTypes['Place'] | ResolversParentTypes['ScheduledOperation'] | ResolversParentTypes['ScheduledRelease'] | ResolversParentTypes['User'];
+  Page: Page;
+  PageConnectInput: PageConnectInput;
+  PageConnection: PageConnection;
+  PageCreateInput: PageCreateInput;
+  PageCreateManyInlineInput: PageCreateManyInlineInput;
+  PageCreateOneInlineInput: PageCreateOneInlineInput;
+  PageEdge: PageEdge;
+  PageInfo: PageInfo;
+  PageManyWhereInput: PageManyWhereInput;
+  PageUpdateInput: PageUpdateInput;
+  PageUpdateManyInlineInput: PageUpdateManyInlineInput;
+  PageUpdateManyInput: PageUpdateManyInput;
+  PageUpdateManyWithNestedWhereInput: PageUpdateManyWithNestedWhereInput;
+  PageUpdateOneInlineInput: PageUpdateOneInlineInput;
+  PageUpdateWithNestedWhereUniqueInput: PageUpdateWithNestedWhereUniqueInput;
+  PageUpsertInput: PageUpsertInput;
+  PageUpsertWithNestedWhereUniqueInput: PageUpsertWithNestedWhereUniqueInput;
+  PageWhereComparatorInput: PageWhereComparatorInput;
+  PageWhereInput: PageWhereInput;
+  PageWhereStageInput: PageWhereStageInput;
+  PageWhereUniqueInput: PageWhereUniqueInput;
+  Place: Place;
+  PlaceConnectInput: PlaceConnectInput;
+  PlaceConnection: PlaceConnection;
+  PlaceCreateInput: PlaceCreateInput;
+  PlaceCreateManyInlineInput: PlaceCreateManyInlineInput;
+  PlaceCreateOneInlineInput: PlaceCreateOneInlineInput;
+  PlaceEdge: PlaceEdge;
+  PlaceManyWhereInput: PlaceManyWhereInput;
+  PlaceUpdateInput: PlaceUpdateInput;
+  PlaceUpdateManyInlineInput: PlaceUpdateManyInlineInput;
+  PlaceUpdateManyInput: PlaceUpdateManyInput;
+  PlaceUpdateManyWithNestedWhereInput: PlaceUpdateManyWithNestedWhereInput;
+  PlaceUpdateOneInlineInput: PlaceUpdateOneInlineInput;
+  PlaceUpdateWithNestedWhereUniqueInput: PlaceUpdateWithNestedWhereUniqueInput;
+  PlaceUpsertInput: PlaceUpsertInput;
+  PlaceUpsertWithNestedWhereUniqueInput: PlaceUpsertWithNestedWhereUniqueInput;
+  PlaceWhereComparatorInput: PlaceWhereComparatorInput;
+  PlaceWhereInput: PlaceWhereInput;
+  PlaceWhereStageInput: PlaceWhereStageInput;
+  PlaceWhereUniqueInput: PlaceWhereUniqueInput;
+  PublishLocaleInput: PublishLocaleInput;
+  Query: {};
+  RGBA: Rgba;
+  RGBAHue: Scalars['RGBAHue'];
+  RGBAInput: RgbaInput;
+  RGBATransparency: Scalars['RGBATransparency'];
+  RichText: RichText;
+  RichTextAST: Scalars['RichTextAST'];
+  ScheduledOperation: Omit<ScheduledOperation, 'affectedDocuments'> & { affectedDocuments: Array<ResolversParentTypes['ScheduledOperationAffectedDocument']> };
+  ScheduledOperationAffectedDocument: ResolversParentTypes['Asset'] | ResolversParentTypes['Page'] | ResolversParentTypes['Place'];
+  ScheduledOperationConnectInput: ScheduledOperationConnectInput;
+  ScheduledOperationConnection: ScheduledOperationConnection;
+  ScheduledOperationCreateManyInlineInput: ScheduledOperationCreateManyInlineInput;
+  ScheduledOperationCreateOneInlineInput: ScheduledOperationCreateOneInlineInput;
+  ScheduledOperationEdge: ScheduledOperationEdge;
+  ScheduledOperationManyWhereInput: ScheduledOperationManyWhereInput;
+  ScheduledOperationUpdateManyInlineInput: ScheduledOperationUpdateManyInlineInput;
+  ScheduledOperationUpdateOneInlineInput: ScheduledOperationUpdateOneInlineInput;
+  ScheduledOperationWhereInput: ScheduledOperationWhereInput;
+  ScheduledOperationWhereUniqueInput: ScheduledOperationWhereUniqueInput;
+  ScheduledRelease: ScheduledRelease;
+  ScheduledReleaseConnectInput: ScheduledReleaseConnectInput;
+  ScheduledReleaseConnection: ScheduledReleaseConnection;
+  ScheduledReleaseCreateInput: ScheduledReleaseCreateInput;
+  ScheduledReleaseCreateManyInlineInput: ScheduledReleaseCreateManyInlineInput;
+  ScheduledReleaseCreateOneInlineInput: ScheduledReleaseCreateOneInlineInput;
+  ScheduledReleaseEdge: ScheduledReleaseEdge;
+  ScheduledReleaseManyWhereInput: ScheduledReleaseManyWhereInput;
+  ScheduledReleaseUpdateInput: ScheduledReleaseUpdateInput;
+  ScheduledReleaseUpdateManyInlineInput: ScheduledReleaseUpdateManyInlineInput;
+  ScheduledReleaseUpdateManyInput: ScheduledReleaseUpdateManyInput;
+  ScheduledReleaseUpdateManyWithNestedWhereInput: ScheduledReleaseUpdateManyWithNestedWhereInput;
+  ScheduledReleaseUpdateOneInlineInput: ScheduledReleaseUpdateOneInlineInput;
+  ScheduledReleaseUpdateWithNestedWhereUniqueInput: ScheduledReleaseUpdateWithNestedWhereUniqueInput;
+  ScheduledReleaseUpsertInput: ScheduledReleaseUpsertInput;
+  ScheduledReleaseUpsertWithNestedWhereUniqueInput: ScheduledReleaseUpsertWithNestedWhereUniqueInput;
+  ScheduledReleaseWhereInput: ScheduledReleaseWhereInput;
+  ScheduledReleaseWhereUniqueInput: ScheduledReleaseWhereUniqueInput;
+  UnpublishLocaleInput: UnpublishLocaleInput;
+  User: User;
+  UserConnectInput: UserConnectInput;
+  UserConnection: UserConnection;
+  UserCreateManyInlineInput: UserCreateManyInlineInput;
+  UserCreateOneInlineInput: UserCreateOneInlineInput;
+  UserEdge: UserEdge;
+  UserManyWhereInput: UserManyWhereInput;
+  UserUpdateManyInlineInput: UserUpdateManyInlineInput;
+  UserUpdateOneInlineInput: UserUpdateOneInlineInput;
+  UserWhereComparatorInput: UserWhereComparatorInput;
+  UserWhereInput: UserWhereInput;
+  UserWhereStageInput: UserWhereStageInput;
+  UserWhereUniqueInput: UserWhereUniqueInput;
+  Version: Version;
+  VersionWhereInput: VersionWhereInput;
+};
+
+export type AggregateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Aggregate'] = ResolversParentTypes['Aggregate']> = {
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AssetResolvers<ContextType = any, ParentType extends ResolversParentTypes['Asset'] = ResolversParentTypes['Asset']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<AssetCreatedAtArgs, 'variation'>>;
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<AssetCreatedByArgs>>;
+  documentInStages?: Resolver<Array<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<AssetDocumentInStagesArgs, 'includeCurrent' | 'inheritLocale' | 'stages'>>;
+  fileName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  galleyPlace?: Resolver<Array<ResolversTypes['Place']>, ParentType, ContextType, Partial<AssetGalleyPlaceArgs>>;
+  handle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  height?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  history?: Resolver<Array<ResolversTypes['Version']>, ParentType, ContextType, RequireFields<AssetHistoryArgs, 'limit' | 'skip'>>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  locale?: Resolver<ResolversTypes['Locale'], ParentType, ContextType>;
+  localizations?: Resolver<Array<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<AssetLocalizationsArgs, 'includeCurrent' | 'locales'>>;
+  mimeType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  publishedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType, RequireFields<AssetPublishedAtArgs, 'variation'>>;
+  publishedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<AssetPublishedByArgs>>;
+  scheduledIn?: Resolver<Array<ResolversTypes['ScheduledOperation']>, ParentType, ContextType, Partial<AssetScheduledInArgs>>;
+  size?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  stage?: Resolver<ResolversTypes['Stage'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<AssetUpdatedAtArgs, 'variation'>>;
+  updatedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<AssetUpdatedByArgs>>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType, Partial<AssetUrlArgs>>;
+  width?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AssetConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['AssetConnection'] = ResolversParentTypes['AssetConnection']> = {
+  aggregate?: Resolver<ResolversTypes['Aggregate'], ParentType, ContextType>;
+  edges?: Resolver<Array<ResolversTypes['AssetEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AssetEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['AssetEdge'] = ResolversParentTypes['AssetEdge']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['Asset'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type BatchPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['BatchPayload'] = ResolversParentTypes['BatchPayload']> = {
+  count?: Resolver<ResolversTypes['Long'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ColorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Color'] = ResolversParentTypes['Color']> = {
+  css?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  hex?: Resolver<ResolversTypes['Hex'], ParentType, ContextType>;
+  rgba?: Resolver<ResolversTypes['RGBA'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+  name: 'Date';
+}
+
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
+
+export type DocumentVersionResolvers<ContextType = any, ParentType extends ResolversParentTypes['DocumentVersion'] = ResolversParentTypes['DocumentVersion']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  data?: Resolver<Maybe<ResolversTypes['Json']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  revision?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  stage?: Resolver<ResolversTypes['Stage'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface HexScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Hex'], any> {
+  name: 'Hex';
+}
+
+export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Json'], any> {
+  name: 'Json';
+}
+
+export type LocationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Location'] = ResolversParentTypes['Location']> = {
+  distance?: Resolver<ResolversTypes['Float'], ParentType, ContextType, RequireFields<LocationDistanceArgs, 'from'>>;
+  latitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  longitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface LongScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Long'], any> {
+  name: 'Long';
+}
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createAsset?: Resolver<Maybe<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<MutationCreateAssetArgs, 'data'>>;
+  createPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationCreatePageArgs, 'data'>>;
+  createPlace?: Resolver<Maybe<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<MutationCreatePlaceArgs, 'data'>>;
+  createScheduledRelease?: Resolver<Maybe<ResolversTypes['ScheduledRelease']>, ParentType, ContextType, RequireFields<MutationCreateScheduledReleaseArgs, 'data'>>;
+  deleteAsset?: Resolver<Maybe<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<MutationDeleteAssetArgs, 'where'>>;
+  deleteManyAssets?: Resolver<ResolversTypes['BatchPayload'], ParentType, ContextType, Partial<MutationDeleteManyAssetsArgs>>;
+  deleteManyAssetsConnection?: Resolver<ResolversTypes['AssetConnection'], ParentType, ContextType, Partial<MutationDeleteManyAssetsConnectionArgs>>;
+  deleteManyPages?: Resolver<ResolversTypes['BatchPayload'], ParentType, ContextType, Partial<MutationDeleteManyPagesArgs>>;
+  deleteManyPagesConnection?: Resolver<ResolversTypes['PageConnection'], ParentType, ContextType, Partial<MutationDeleteManyPagesConnectionArgs>>;
+  deleteManyPlaces?: Resolver<ResolversTypes['BatchPayload'], ParentType, ContextType, Partial<MutationDeleteManyPlacesArgs>>;
+  deleteManyPlacesConnection?: Resolver<ResolversTypes['PlaceConnection'], ParentType, ContextType, Partial<MutationDeleteManyPlacesConnectionArgs>>;
+  deletePage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationDeletePageArgs, 'where'>>;
+  deletePlace?: Resolver<Maybe<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<MutationDeletePlaceArgs, 'where'>>;
+  deleteScheduledOperation?: Resolver<Maybe<ResolversTypes['ScheduledOperation']>, ParentType, ContextType, RequireFields<MutationDeleteScheduledOperationArgs, 'where'>>;
+  deleteScheduledRelease?: Resolver<Maybe<ResolversTypes['ScheduledRelease']>, ParentType, ContextType, RequireFields<MutationDeleteScheduledReleaseArgs, 'where'>>;
+  publishAsset?: Resolver<Maybe<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<MutationPublishAssetArgs, 'publishBase' | 'to' | 'where' | 'withDefaultLocale'>>;
+  publishManyAssets?: Resolver<ResolversTypes['BatchPayload'], ParentType, ContextType, RequireFields<MutationPublishManyAssetsArgs, 'publishBase' | 'to' | 'withDefaultLocale'>>;
+  publishManyAssetsConnection?: Resolver<ResolversTypes['AssetConnection'], ParentType, ContextType, RequireFields<MutationPublishManyAssetsConnectionArgs, 'from' | 'publishBase' | 'to' | 'withDefaultLocale'>>;
+  publishManyPages?: Resolver<ResolversTypes['BatchPayload'], ParentType, ContextType, RequireFields<MutationPublishManyPagesArgs, 'to'>>;
+  publishManyPagesConnection?: Resolver<ResolversTypes['PageConnection'], ParentType, ContextType, RequireFields<MutationPublishManyPagesConnectionArgs, 'from' | 'to'>>;
+  publishManyPlaces?: Resolver<ResolversTypes['BatchPayload'], ParentType, ContextType, RequireFields<MutationPublishManyPlacesArgs, 'to'>>;
+  publishManyPlacesConnection?: Resolver<ResolversTypes['PlaceConnection'], ParentType, ContextType, RequireFields<MutationPublishManyPlacesConnectionArgs, 'from' | 'to'>>;
+  publishPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationPublishPageArgs, 'to' | 'where'>>;
+  publishPlace?: Resolver<Maybe<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<MutationPublishPlaceArgs, 'to' | 'where'>>;
+  schedulePublishAsset?: Resolver<Maybe<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<MutationSchedulePublishAssetArgs, 'publishBase' | 'to' | 'where' | 'withDefaultLocale'>>;
+  schedulePublishPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationSchedulePublishPageArgs, 'to' | 'where'>>;
+  schedulePublishPlace?: Resolver<Maybe<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<MutationSchedulePublishPlaceArgs, 'to' | 'where'>>;
+  scheduleUnpublishAsset?: Resolver<Maybe<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<MutationScheduleUnpublishAssetArgs, 'from' | 'unpublishBase' | 'where'>>;
+  scheduleUnpublishPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationScheduleUnpublishPageArgs, 'from' | 'where'>>;
+  scheduleUnpublishPlace?: Resolver<Maybe<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<MutationScheduleUnpublishPlaceArgs, 'from' | 'where'>>;
+  unpublishAsset?: Resolver<Maybe<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<MutationUnpublishAssetArgs, 'from' | 'unpublishBase' | 'where'>>;
+  unpublishManyAssets?: Resolver<ResolversTypes['BatchPayload'], ParentType, ContextType, RequireFields<MutationUnpublishManyAssetsArgs, 'from' | 'unpublishBase'>>;
+  unpublishManyAssetsConnection?: Resolver<ResolversTypes['AssetConnection'], ParentType, ContextType, RequireFields<MutationUnpublishManyAssetsConnectionArgs, 'from' | 'stage' | 'unpublishBase'>>;
+  unpublishManyPages?: Resolver<ResolversTypes['BatchPayload'], ParentType, ContextType, RequireFields<MutationUnpublishManyPagesArgs, 'from'>>;
+  unpublishManyPagesConnection?: Resolver<ResolversTypes['PageConnection'], ParentType, ContextType, RequireFields<MutationUnpublishManyPagesConnectionArgs, 'from' | 'stage'>>;
+  unpublishManyPlaces?: Resolver<ResolversTypes['BatchPayload'], ParentType, ContextType, RequireFields<MutationUnpublishManyPlacesArgs, 'from'>>;
+  unpublishManyPlacesConnection?: Resolver<ResolversTypes['PlaceConnection'], ParentType, ContextType, RequireFields<MutationUnpublishManyPlacesConnectionArgs, 'from' | 'stage'>>;
+  unpublishPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationUnpublishPageArgs, 'from' | 'where'>>;
+  unpublishPlace?: Resolver<Maybe<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<MutationUnpublishPlaceArgs, 'from' | 'where'>>;
+  updateAsset?: Resolver<Maybe<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<MutationUpdateAssetArgs, 'data' | 'where'>>;
+  updateManyAssets?: Resolver<ResolversTypes['BatchPayload'], ParentType, ContextType, RequireFields<MutationUpdateManyAssetsArgs, 'data'>>;
+  updateManyAssetsConnection?: Resolver<ResolversTypes['AssetConnection'], ParentType, ContextType, RequireFields<MutationUpdateManyAssetsConnectionArgs, 'data'>>;
+  updateManyPages?: Resolver<ResolversTypes['BatchPayload'], ParentType, ContextType, RequireFields<MutationUpdateManyPagesArgs, 'data'>>;
+  updateManyPagesConnection?: Resolver<ResolversTypes['PageConnection'], ParentType, ContextType, RequireFields<MutationUpdateManyPagesConnectionArgs, 'data'>>;
+  updateManyPlaces?: Resolver<ResolversTypes['BatchPayload'], ParentType, ContextType, RequireFields<MutationUpdateManyPlacesArgs, 'data'>>;
+  updateManyPlacesConnection?: Resolver<ResolversTypes['PlaceConnection'], ParentType, ContextType, RequireFields<MutationUpdateManyPlacesConnectionArgs, 'data'>>;
+  updatePage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationUpdatePageArgs, 'data' | 'where'>>;
+  updatePlace?: Resolver<Maybe<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<MutationUpdatePlaceArgs, 'data' | 'where'>>;
+  updateScheduledRelease?: Resolver<Maybe<ResolversTypes['ScheduledRelease']>, ParentType, ContextType, RequireFields<MutationUpdateScheduledReleaseArgs, 'data' | 'where'>>;
+  upsertAsset?: Resolver<Maybe<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<MutationUpsertAssetArgs, 'upsert' | 'where'>>;
+  upsertPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationUpsertPageArgs, 'upsert' | 'where'>>;
+  upsertPlace?: Resolver<Maybe<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<MutationUpsertPlaceArgs, 'upsert' | 'where'>>;
+};
+
+export type NodeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = {
+  __resolveType: TypeResolveFn<'Asset' | 'Page' | 'Place' | 'ScheduledOperation' | 'ScheduledRelease' | 'User', ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  stage?: Resolver<ResolversTypes['Stage'], ParentType, ContextType>;
+};
+
+export type PageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = {
+  body?: Resolver<ResolversTypes['RichText'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<PageCreatedByArgs>>;
+  documentInStages?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<PageDocumentInStagesArgs, 'includeCurrent' | 'inheritLocale' | 'stages'>>;
+  heading?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  history?: Resolver<Array<ResolversTypes['Version']>, ParentType, ContextType, RequireFields<PageHistoryArgs, 'limit' | 'skip'>>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  publishedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  publishedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<PagePublishedByArgs>>;
+  scheduledIn?: Resolver<Array<ResolversTypes['ScheduledOperation']>, ParentType, ContextType, Partial<PageScheduledInArgs>>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  stage?: Resolver<ResolversTypes['Stage'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<PageUpdatedByArgs>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PageConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageConnection'] = ResolversParentTypes['PageConnection']> = {
+  aggregate?: Resolver<ResolversTypes['Aggregate'], ParentType, ContextType>;
+  edges?: Resolver<Array<ResolversTypes['PageEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PageEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageEdge'] = ResolversParentTypes['PageEdge']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['Page'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
+  endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  pageSize?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  startCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PlaceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Place'] = ResolversParentTypes['Place']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<PlaceCreatedByArgs>>;
+  description?: Resolver<Maybe<ResolversTypes['RichText']>, ParentType, ContextType>;
+  documentInStages?: Resolver<Array<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<PlaceDocumentInStagesArgs, 'includeCurrent' | 'inheritLocale' | 'stages'>>;
+  galley?: Resolver<Array<ResolversTypes['Asset']>, ParentType, ContextType, Partial<PlaceGalleyArgs>>;
+  history?: Resolver<Array<ResolversTypes['Version']>, ParentType, ContextType, RequireFields<PlaceHistoryArgs, 'limit' | 'skip'>>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  location?: Resolver<ResolversTypes['Location'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  publishedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  publishedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<PlacePublishedByArgs>>;
+  scheduledIn?: Resolver<Array<ResolversTypes['ScheduledOperation']>, ParentType, ContextType, Partial<PlaceScheduledInArgs>>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  stage?: Resolver<ResolversTypes['Stage'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<PlaceUpdatedByArgs>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PlaceConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlaceConnection'] = ResolversParentTypes['PlaceConnection']> = {
+  aggregate?: Resolver<ResolversTypes['Aggregate'], ParentType, ContextType>;
+  edges?: Resolver<Array<ResolversTypes['PlaceEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PlaceEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlaceEdge'] = ResolversParentTypes['PlaceEdge']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['Place'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  asset?: Resolver<Maybe<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<QueryAssetArgs, 'locales' | 'stage' | 'where'>>;
+  assetVersion?: Resolver<Maybe<ResolversTypes['DocumentVersion']>, ParentType, ContextType, RequireFields<QueryAssetVersionArgs, 'where'>>;
+  assets?: Resolver<Array<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<QueryAssetsArgs, 'locales' | 'stage'>>;
+  assetsConnection?: Resolver<ResolversTypes['AssetConnection'], ParentType, ContextType, RequireFields<QueryAssetsConnectionArgs, 'locales' | 'stage'>>;
+  node?: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, 'id' | 'locales' | 'stage'>>;
+  page?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<QueryPageArgs, 'locales' | 'stage' | 'where'>>;
+  pageVersion?: Resolver<Maybe<ResolversTypes['DocumentVersion']>, ParentType, ContextType, RequireFields<QueryPageVersionArgs, 'where'>>;
+  pages?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<QueryPagesArgs, 'locales' | 'stage'>>;
+  pagesConnection?: Resolver<ResolversTypes['PageConnection'], ParentType, ContextType, RequireFields<QueryPagesConnectionArgs, 'locales' | 'stage'>>;
+  place?: Resolver<Maybe<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<QueryPlaceArgs, 'locales' | 'stage' | 'where'>>;
+  placeVersion?: Resolver<Maybe<ResolversTypes['DocumentVersion']>, ParentType, ContextType, RequireFields<QueryPlaceVersionArgs, 'where'>>;
+  places?: Resolver<Array<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<QueryPlacesArgs, 'locales' | 'stage'>>;
+  placesConnection?: Resolver<ResolversTypes['PlaceConnection'], ParentType, ContextType, RequireFields<QueryPlacesConnectionArgs, 'locales' | 'stage'>>;
+  scheduledOperation?: Resolver<Maybe<ResolversTypes['ScheduledOperation']>, ParentType, ContextType, RequireFields<QueryScheduledOperationArgs, 'locales' | 'stage' | 'where'>>;
+  scheduledOperations?: Resolver<Array<ResolversTypes['ScheduledOperation']>, ParentType, ContextType, RequireFields<QueryScheduledOperationsArgs, 'locales' | 'stage'>>;
+  scheduledOperationsConnection?: Resolver<ResolversTypes['ScheduledOperationConnection'], ParentType, ContextType, RequireFields<QueryScheduledOperationsConnectionArgs, 'locales' | 'stage'>>;
+  scheduledRelease?: Resolver<Maybe<ResolversTypes['ScheduledRelease']>, ParentType, ContextType, RequireFields<QueryScheduledReleaseArgs, 'locales' | 'stage' | 'where'>>;
+  scheduledReleases?: Resolver<Array<ResolversTypes['ScheduledRelease']>, ParentType, ContextType, RequireFields<QueryScheduledReleasesArgs, 'locales' | 'stage'>>;
+  scheduledReleasesConnection?: Resolver<ResolversTypes['ScheduledReleaseConnection'], ParentType, ContextType, RequireFields<QueryScheduledReleasesConnectionArgs, 'locales' | 'stage'>>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'locales' | 'stage' | 'where'>>;
+  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUsersArgs, 'locales' | 'stage'>>;
+  usersConnection?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<QueryUsersConnectionArgs, 'locales' | 'stage'>>;
+};
+
+export type RgbaResolvers<ContextType = any, ParentType extends ResolversParentTypes['RGBA'] = ResolversParentTypes['RGBA']> = {
+  a?: Resolver<ResolversTypes['RGBATransparency'], ParentType, ContextType>;
+  b?: Resolver<ResolversTypes['RGBAHue'], ParentType, ContextType>;
+  g?: Resolver<ResolversTypes['RGBAHue'], ParentType, ContextType>;
+  r?: Resolver<ResolversTypes['RGBAHue'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface RgbaHueScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RGBAHue'], any> {
+  name: 'RGBAHue';
+}
+
+export interface RgbaTransparencyScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RGBATransparency'], any> {
+  name: 'RGBATransparency';
+}
+
+export type RichTextResolvers<ContextType = any, ParentType extends ResolversParentTypes['RichText'] = ResolversParentTypes['RichText']> = {
+  html?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  markdown?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  raw?: Resolver<ResolversTypes['RichTextAST'], ParentType, ContextType>;
+  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface RichTextAstScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RichTextAST'], any> {
+  name: 'RichTextAST';
+}
+
+export type ScheduledOperationResolvers<ContextType = any, ParentType extends ResolversParentTypes['ScheduledOperation'] = ResolversParentTypes['ScheduledOperation']> = {
+  affectedDocuments?: Resolver<Array<ResolversTypes['ScheduledOperationAffectedDocument']>, ParentType, ContextType, Partial<ScheduledOperationAffectedDocumentsArgs>>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<ScheduledOperationCreatedByArgs>>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  documentInStages?: Resolver<Array<ResolversTypes['ScheduledOperation']>, ParentType, ContextType, RequireFields<ScheduledOperationDocumentInStagesArgs, 'includeCurrent' | 'inheritLocale' | 'stages'>>;
+  errorMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  publishedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  publishedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<ScheduledOperationPublishedByArgs>>;
+  rawPayload?: Resolver<ResolversTypes['Json'], ParentType, ContextType>;
+  release?: Resolver<Maybe<ResolversTypes['ScheduledRelease']>, ParentType, ContextType, Partial<ScheduledOperationReleaseArgs>>;
+  stage?: Resolver<ResolversTypes['Stage'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['ScheduledOperationStatus'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<ScheduledOperationUpdatedByArgs>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ScheduledOperationAffectedDocumentResolvers<ContextType = any, ParentType extends ResolversParentTypes['ScheduledOperationAffectedDocument'] = ResolversParentTypes['ScheduledOperationAffectedDocument']> = {
+  __resolveType: TypeResolveFn<'Asset' | 'Page' | 'Place', ParentType, ContextType>;
+};
+
+export type ScheduledOperationConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['ScheduledOperationConnection'] = ResolversParentTypes['ScheduledOperationConnection']> = {
+  aggregate?: Resolver<ResolversTypes['Aggregate'], ParentType, ContextType>;
+  edges?: Resolver<Array<ResolversTypes['ScheduledOperationEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ScheduledOperationEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['ScheduledOperationEdge'] = ResolversParentTypes['ScheduledOperationEdge']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['ScheduledOperation'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ScheduledReleaseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ScheduledRelease'] = ResolversParentTypes['ScheduledRelease']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<ScheduledReleaseCreatedByArgs>>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  documentInStages?: Resolver<Array<ResolversTypes['ScheduledRelease']>, ParentType, ContextType, RequireFields<ScheduledReleaseDocumentInStagesArgs, 'includeCurrent' | 'inheritLocale' | 'stages'>>;
+  errorMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isImplicit?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  operations?: Resolver<Array<ResolversTypes['ScheduledOperation']>, ParentType, ContextType, Partial<ScheduledReleaseOperationsArgs>>;
+  publishedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  publishedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<ScheduledReleasePublishedByArgs>>;
+  releaseAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  stage?: Resolver<ResolversTypes['Stage'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['ScheduledReleaseStatus'], ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<ScheduledReleaseUpdatedByArgs>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ScheduledReleaseConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['ScheduledReleaseConnection'] = ResolversParentTypes['ScheduledReleaseConnection']> = {
+  aggregate?: Resolver<ResolversTypes['Aggregate'], ParentType, ContextType>;
+  edges?: Resolver<Array<ResolversTypes['ScheduledReleaseEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ScheduledReleaseEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['ScheduledReleaseEdge'] = ResolversParentTypes['ScheduledReleaseEdge']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['ScheduledRelease'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  documentInStages?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<UserDocumentInStagesArgs, 'includeCurrent' | 'inheritLocale' | 'stages'>>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  kind?: Resolver<ResolversTypes['UserKind'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  publishedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  stage?: Resolver<ResolversTypes['Stage'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserConnection'] = ResolversParentTypes['UserConnection']> = {
+  aggregate?: Resolver<ResolversTypes['Aggregate'], ParentType, ContextType>;
+  edges?: Resolver<Array<ResolversTypes['UserEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserEdge'] = ResolversParentTypes['UserEdge']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type VersionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Version'] = ResolversParentTypes['Version']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  revision?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  stage?: Resolver<ResolversTypes['Stage'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Resolvers<ContextType = any> = {
+  Aggregate?: AggregateResolvers<ContextType>;
+  Asset?: AssetResolvers<ContextType>;
+  AssetConnection?: AssetConnectionResolvers<ContextType>;
+  AssetEdge?: AssetEdgeResolvers<ContextType>;
+  BatchPayload?: BatchPayloadResolvers<ContextType>;
+  Color?: ColorResolvers<ContextType>;
+  Date?: GraphQLScalarType;
+  DateTime?: GraphQLScalarType;
+  DocumentVersion?: DocumentVersionResolvers<ContextType>;
+  Hex?: GraphQLScalarType;
+  Json?: GraphQLScalarType;
+  Location?: LocationResolvers<ContextType>;
+  Long?: GraphQLScalarType;
+  Mutation?: MutationResolvers<ContextType>;
+  Node?: NodeResolvers<ContextType>;
+  Page?: PageResolvers<ContextType>;
+  PageConnection?: PageConnectionResolvers<ContextType>;
+  PageEdge?: PageEdgeResolvers<ContextType>;
+  PageInfo?: PageInfoResolvers<ContextType>;
+  Place?: PlaceResolvers<ContextType>;
+  PlaceConnection?: PlaceConnectionResolvers<ContextType>;
+  PlaceEdge?: PlaceEdgeResolvers<ContextType>;
+  Query?: QueryResolvers<ContextType>;
+  RGBA?: RgbaResolvers<ContextType>;
+  RGBAHue?: GraphQLScalarType;
+  RGBATransparency?: GraphQLScalarType;
+  RichText?: RichTextResolvers<ContextType>;
+  RichTextAST?: GraphQLScalarType;
+  ScheduledOperation?: ScheduledOperationResolvers<ContextType>;
+  ScheduledOperationAffectedDocument?: ScheduledOperationAffectedDocumentResolvers<ContextType>;
+  ScheduledOperationConnection?: ScheduledOperationConnectionResolvers<ContextType>;
+  ScheduledOperationEdge?: ScheduledOperationEdgeResolvers<ContextType>;
+  ScheduledRelease?: ScheduledReleaseResolvers<ContextType>;
+  ScheduledReleaseConnection?: ScheduledReleaseConnectionResolvers<ContextType>;
+  ScheduledReleaseEdge?: ScheduledReleaseEdgeResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
+  UserConnection?: UserConnectionResolvers<ContextType>;
+  UserEdge?: UserEdgeResolvers<ContextType>;
+  Version?: VersionResolvers<ContextType>;
+};
+
+
+export const namedOperations = {
+  Query: {
+    getPages: 'getPages',
+    getPageBySlug: 'getPageBySlug',
+    getPlaces: 'getPlaces',
+    getPlaceBySlug: 'getPlaceBySlug'
+  }
+}

@@ -6,9 +6,14 @@ const config: CodegenConfig = {
     'https://api-sa-east-1.hygraph.com/v2/cl9ejt0i408eq01t46vzr916b/master',
   documents: 'src/graphql/queries.ts',
   generates: {
-    'src/graphql/generated/graphql.ts': {
+    'src/graphql/generated/types': {
       preset: 'client',
-      plugins: ['typescript', 'typescript-operations']
+      plugins: [
+        'typescript',
+        'typescript-operations',
+        'typescript-resolvers',
+        'named-operations-object'
+      ]
     }
   }
 }

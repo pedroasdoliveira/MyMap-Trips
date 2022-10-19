@@ -16,6 +16,6 @@
     "isolatedModules": true,
     "jsx": "preserve"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/graphql/generated/types", "src/graphql/generated/types"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/graphql/generated/types", "src/graphql/generated/types", "src/graphql/generated/types"],
   "exclude": ["node_modules"]
 }

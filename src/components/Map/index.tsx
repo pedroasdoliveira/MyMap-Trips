@@ -1,5 +1,4 @@
-import { type } from 'os'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, Marker, TileLayer } from 'react-leaflet'
 
 type Places = {
   id: string
@@ -19,7 +18,7 @@ const MapComponent = ({ places }: MapProps) => {
   return (
     <MapContainer
       center={[0, 0]}
-      zoom={10}
+      zoom={3}
       scrollWheelZoom={true}
       style={{ height: '100%', width: '100%' }}
     >
@@ -27,7 +26,7 @@ const MapComponent = ({ places }: MapProps) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {places?.map(({ id, name, slug, location }) => {
+      {places?.map(({ id, name, location }) => {
         const { latitude, longitude } = location
 
         return (
