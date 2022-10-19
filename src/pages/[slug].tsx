@@ -6,7 +6,7 @@ import {
 import { GET_PAGES, GET_PAGE_BY_QUERY } from 'graphql/queries'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { useRouter } from 'next/router'
-import PageTemplates, { PageTemplateProps } from 'templates/Pages'
+import PageTemplates, { PageTemplateProps } from 'templa/Pages'
 
 const Page = ({ heading, body }: PageTemplateProps) => {
   const router = useRouter()
