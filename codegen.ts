@@ -13,7 +13,12 @@ const config: CodegenConfig = {
         'typescript-operations',
         'typescript-resolvers',
         'named-operations-object'
-      ]
+      ],
+      config: {
+        namingConvention: {
+          enumValues: 'change-case-all#titleCase'
+        }
+      }
     }
   }
 }

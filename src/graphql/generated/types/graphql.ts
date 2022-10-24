@@ -335,26 +335,26 @@ export type AssetManyWhereInput = {
 };
 
 export enum AssetOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  FileNameAsc = 'fileName_ASC',
-  FileNameDesc = 'fileName_DESC',
-  HandleAsc = 'handle_ASC',
-  HandleDesc = 'handle_DESC',
-  HeightAsc = 'height_ASC',
-  HeightDesc = 'height_DESC',
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  MimeTypeAsc = 'mimeType_ASC',
-  MimeTypeDesc = 'mimeType_DESC',
-  PublishedAtAsc = 'publishedAt_ASC',
-  PublishedAtDesc = 'publishedAt_DESC',
-  SizeAsc = 'size_ASC',
-  SizeDesc = 'size_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC',
-  WidthAsc = 'width_ASC',
-  WidthDesc = 'width_DESC'
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  fileName_ASC = 'fileName_ASC',
+  fileName_DESC = 'fileName_DESC',
+  handle_ASC = 'handle_ASC',
+  handle_DESC = 'handle_DESC',
+  height_ASC = 'height_ASC',
+  height_DESC = 'height_DESC',
+  id_ASC = 'id_ASC',
+  id_DESC = 'id_DESC',
+  mimeType_ASC = 'mimeType_ASC',
+  mimeType_DESC = 'mimeType_DESC',
+  publishedAt_ASC = 'publishedAt_ASC',
+  publishedAt_DESC = 'publishedAt_DESC',
+  size_ASC = 'size_ASC',
+  size_DESC = 'size_DESC',
+  updatedAt_ASC = 'updatedAt_ASC',
+  updatedAt_DESC = 'updatedAt_DESC',
+  width_ASC = 'width_ASC',
+  width_DESC = 'width_DESC'
 }
 
 /** Transformations for Assets */
@@ -1662,18 +1662,18 @@ export type PageManyWhereInput = {
 };
 
 export enum PageOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  HeadingAsc = 'heading_ASC',
-  HeadingDesc = 'heading_DESC',
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  PublishedAtAsc = 'publishedAt_ASC',
-  PublishedAtDesc = 'publishedAt_DESC',
-  SlugAsc = 'slug_ASC',
-  SlugDesc = 'slug_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC'
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  heading_ASC = 'heading_ASC',
+  heading_DESC = 'heading_DESC',
+  id_ASC = 'id_ASC',
+  id_DESC = 'id_DESC',
+  publishedAt_ASC = 'publishedAt_ASC',
+  publishedAt_DESC = 'publishedAt_DESC',
+  slug_ASC = 'slug_ASC',
+  slug_DESC = 'slug_DESC',
+  updatedAt_ASC = 'updatedAt_ASC',
+  updatedAt_DESC = 'updatedAt_DESC'
 }
 
 export type PageUpdateInput = {
@@ -2155,18 +2155,18 @@ export type PlaceManyWhereInput = {
 };
 
 export enum PlaceOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  NameAsc = 'name_ASC',
-  NameDesc = 'name_DESC',
-  PublishedAtAsc = 'publishedAt_ASC',
-  PublishedAtDesc = 'publishedAt_DESC',
-  SlugAsc = 'slug_ASC',
-  SlugDesc = 'slug_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC'
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  id_ASC = 'id_ASC',
+  id_DESC = 'id_DESC',
+  name_ASC = 'name_ASC',
+  name_DESC = 'name_DESC',
+  publishedAt_ASC = 'publishedAt_ASC',
+  publishedAt_DESC = 'publishedAt_DESC',
+  slug_ASC = 'slug_ASC',
+  slug_DESC = 'slug_DESC',
+  updatedAt_ASC = 'updatedAt_ASC',
+  updatedAt_DESC = 'updatedAt_DESC'
 }
 
 export type PlaceUpdateInput = {
@@ -2940,29 +2940,29 @@ export type ScheduledOperationManyWhereInput = {
 };
 
 export enum ScheduledOperationOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  DescriptionAsc = 'description_ASC',
-  DescriptionDesc = 'description_DESC',
-  ErrorMessageAsc = 'errorMessage_ASC',
-  ErrorMessageDesc = 'errorMessage_DESC',
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  PublishedAtAsc = 'publishedAt_ASC',
-  PublishedAtDesc = 'publishedAt_DESC',
-  StatusAsc = 'status_ASC',
-  StatusDesc = 'status_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC'
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  description_ASC = 'description_ASC',
+  description_DESC = 'description_DESC',
+  errorMessage_ASC = 'errorMessage_ASC',
+  errorMessage_DESC = 'errorMessage_DESC',
+  id_ASC = 'id_ASC',
+  id_DESC = 'id_DESC',
+  publishedAt_ASC = 'publishedAt_ASC',
+  publishedAt_DESC = 'publishedAt_DESC',
+  status_ASC = 'status_ASC',
+  status_DESC = 'status_DESC',
+  updatedAt_ASC = 'updatedAt_ASC',
+  updatedAt_DESC = 'updatedAt_DESC'
 }
 
 /** System Scheduled Operation Status */
 export enum ScheduledOperationStatus {
-  Canceled = 'CANCELED',
-  Completed = 'COMPLETED',
-  Failed = 'FAILED',
-  InProgress = 'IN_PROGRESS',
-  Pending = 'PENDING'
+  CANCELED = 'CANCELED',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  PENDING = 'PENDING'
 }
 
 export type ScheduledOperationUpdateManyInlineInput = {
@@ -3407,36 +3407,36 @@ export type ScheduledReleaseManyWhereInput = {
 };
 
 export enum ScheduledReleaseOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  DescriptionAsc = 'description_ASC',
-  DescriptionDesc = 'description_DESC',
-  ErrorMessageAsc = 'errorMessage_ASC',
-  ErrorMessageDesc = 'errorMessage_DESC',
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  IsActiveAsc = 'isActive_ASC',
-  IsActiveDesc = 'isActive_DESC',
-  IsImplicitAsc = 'isImplicit_ASC',
-  IsImplicitDesc = 'isImplicit_DESC',
-  PublishedAtAsc = 'publishedAt_ASC',
-  PublishedAtDesc = 'publishedAt_DESC',
-  ReleaseAtAsc = 'releaseAt_ASC',
-  ReleaseAtDesc = 'releaseAt_DESC',
-  StatusAsc = 'status_ASC',
-  StatusDesc = 'status_DESC',
-  TitleAsc = 'title_ASC',
-  TitleDesc = 'title_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC'
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  description_ASC = 'description_ASC',
+  description_DESC = 'description_DESC',
+  errorMessage_ASC = 'errorMessage_ASC',
+  errorMessage_DESC = 'errorMessage_DESC',
+  id_ASC = 'id_ASC',
+  id_DESC = 'id_DESC',
+  isActive_ASC = 'isActive_ASC',
+  isActive_DESC = 'isActive_DESC',
+  isImplicit_ASC = 'isImplicit_ASC',
+  isImplicit_DESC = 'isImplicit_DESC',
+  publishedAt_ASC = 'publishedAt_ASC',
+  publishedAt_DESC = 'publishedAt_DESC',
+  releaseAt_ASC = 'releaseAt_ASC',
+  releaseAt_DESC = 'releaseAt_DESC',
+  status_ASC = 'status_ASC',
+  status_DESC = 'status_DESC',
+  title_ASC = 'title_ASC',
+  title_DESC = 'title_DESC',
+  updatedAt_ASC = 'updatedAt_ASC',
+  updatedAt_DESC = 'updatedAt_DESC'
 }
 
 /** System Scheduled Release Status */
 export enum ScheduledReleaseStatus {
-  Completed = 'COMPLETED',
-  Failed = 'FAILED',
-  InProgress = 'IN_PROGRESS',
-  Pending = 'PENDING'
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  PENDING = 'PENDING'
 }
 
 export type ScheduledReleaseUpdateInput = {
@@ -3690,15 +3690,15 @@ export type ScheduledReleaseWhereUniqueInput = {
 /** Stage system enumeration */
 export enum Stage {
   /** The Draft is the default stage for all your content. */
-  Draft = 'DRAFT',
+  DRAFT = 'DRAFT',
   /** The Published stage is where you can publish your content to. */
-  Published = 'PUBLISHED'
+  PUBLISHED = 'PUBLISHED'
 }
 
 export enum SystemDateTimeFieldVariation {
-  Base = 'BASE',
-  Combined = 'COMBINED',
-  Localization = 'LOCALIZATION'
+  BASE = 'BASE',
+  COMBINED = 'COMBINED',
+  LOCALIZATION = 'LOCALIZATION'
 }
 
 export type UnpublishLocaleInput = {
@@ -3779,10 +3779,10 @@ export type UserEdge = {
 
 /** System User Kind */
 export enum UserKind {
-  Member = 'MEMBER',
-  Pat = 'PAT',
-  Public = 'PUBLIC',
-  Webhook = 'WEBHOOK'
+  MEMBER = 'MEMBER',
+  PAT = 'PAT',
+  PUBLIC = 'PUBLIC',
+  WEBHOOK = 'WEBHOOK'
 }
 
 /** Identifies documents */
@@ -3913,22 +3913,22 @@ export type UserManyWhereInput = {
 };
 
 export enum UserOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  IsActiveAsc = 'isActive_ASC',
-  IsActiveDesc = 'isActive_DESC',
-  KindAsc = 'kind_ASC',
-  KindDesc = 'kind_DESC',
-  NameAsc = 'name_ASC',
-  NameDesc = 'name_DESC',
-  PictureAsc = 'picture_ASC',
-  PictureDesc = 'picture_DESC',
-  PublishedAtAsc = 'publishedAt_ASC',
-  PublishedAtDesc = 'publishedAt_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC'
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  id_ASC = 'id_ASC',
+  id_DESC = 'id_DESC',
+  isActive_ASC = 'isActive_ASC',
+  isActive_DESC = 'isActive_DESC',
+  kind_ASC = 'kind_ASC',
+  kind_DESC = 'kind_DESC',
+  name_ASC = 'name_ASC',
+  name_DESC = 'name_DESC',
+  picture_ASC = 'picture_ASC',
+  picture_DESC = 'picture_DESC',
+  publishedAt_ASC = 'publishedAt_ASC',
+  publishedAt_DESC = 'publishedAt_DESC',
+  updatedAt_ASC = 'updatedAt_ASC',
+  updatedAt_DESC = 'updatedAt_DESC'
 }
 
 export type UserUpdateManyInlineInput = {
@@ -4114,38 +4114,38 @@ export type VersionWhereInput = {
 };
 
 export enum _FilterKind {
-  And = 'AND',
-  Not = 'NOT',
-  Or = 'OR',
+  AND = 'AND',
+  NOT = 'NOT',
+  OR = 'OR',
   Contains = 'contains',
-  ContainsAll = 'contains_all',
-  ContainsNone = 'contains_none',
-  ContainsSome = 'contains_some',
-  EndsWith = 'ends_with',
+  Contains_all = 'contains_all',
+  Contains_none = 'contains_none',
+  Contains_some = 'contains_some',
+  Ends_with = 'ends_with',
   Eq = 'eq',
-  EqNot = 'eq_not',
+  Eq_not = 'eq_not',
   Gt = 'gt',
   Gte = 'gte',
   In = 'in',
   Lt = 'lt',
   Lte = 'lte',
-  NotContains = 'not_contains',
-  NotEndsWith = 'not_ends_with',
-  NotIn = 'not_in',
-  NotStartsWith = 'not_starts_with',
-  RelationalEvery = 'relational_every',
-  RelationalNone = 'relational_none',
-  RelationalSingle = 'relational_single',
-  RelationalSome = 'relational_some',
+  Not_contains = 'not_contains',
+  Not_ends_with = 'not_ends_with',
+  Not_in = 'not_in',
+  Not_starts_with = 'not_starts_with',
+  Relational_every = 'relational_every',
+  Relational_none = 'relational_none',
+  Relational_single = 'relational_single',
+  Relational_some = 'relational_some',
   Search = 'search',
-  StartsWith = 'starts_with'
+  Starts_with = 'starts_with'
 }
 
 export enum _MutationInputFieldKind {
   Enum = 'enum',
   Relation = 'relation',
-  RichText = 'richText',
-  RichTextWithEmbeds = 'richTextWithEmbeds',
+  richText = 'richText',
+  richTextWithEmbeds = 'richTextWithEmbeds',
   Scalar = 'scalar',
   Union = 'union',
   Virtual = 'virtual'
@@ -4154,15 +4154,15 @@ export enum _MutationInputFieldKind {
 export enum _MutationKind {
   Create = 'create',
   Delete = 'delete',
-  DeleteMany = 'deleteMany',
+  deleteMany = 'deleteMany',
   Publish = 'publish',
-  PublishMany = 'publishMany',
-  SchedulePublish = 'schedulePublish',
-  ScheduleUnpublish = 'scheduleUnpublish',
+  publishMany = 'publishMany',
+  schedulePublish = 'schedulePublish',
+  scheduleUnpublish = 'scheduleUnpublish',
   Unpublish = 'unpublish',
-  UnpublishMany = 'unpublishMany',
+  unpublishMany = 'unpublishMany',
   Update = 'update',
-  UpdateMany = 'updateMany',
+  updateMany = 'updateMany',
   Upsert = 'upsert'
 }
 
@@ -4552,26 +4552,26 @@ export type AssetManyWhereInput = {
 };
 
 export enum AssetOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  FileNameAsc = 'fileName_ASC',
-  FileNameDesc = 'fileName_DESC',
-  HandleAsc = 'handle_ASC',
-  HandleDesc = 'handle_DESC',
-  HeightAsc = 'height_ASC',
-  HeightDesc = 'height_DESC',
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  MimeTypeAsc = 'mimeType_ASC',
-  MimeTypeDesc = 'mimeType_DESC',
-  PublishedAtAsc = 'publishedAt_ASC',
-  PublishedAtDesc = 'publishedAt_DESC',
-  SizeAsc = 'size_ASC',
-  SizeDesc = 'size_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC',
-  WidthAsc = 'width_ASC',
-  WidthDesc = 'width_DESC'
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  fileName_ASC = 'fileName_ASC',
+  fileName_DESC = 'fileName_DESC',
+  handle_ASC = 'handle_ASC',
+  handle_DESC = 'handle_DESC',
+  height_ASC = 'height_ASC',
+  height_DESC = 'height_DESC',
+  id_ASC = 'id_ASC',
+  id_DESC = 'id_DESC',
+  mimeType_ASC = 'mimeType_ASC',
+  mimeType_DESC = 'mimeType_DESC',
+  publishedAt_ASC = 'publishedAt_ASC',
+  publishedAt_DESC = 'publishedAt_DESC',
+  size_ASC = 'size_ASC',
+  size_DESC = 'size_DESC',
+  updatedAt_ASC = 'updatedAt_ASC',
+  updatedAt_DESC = 'updatedAt_DESC',
+  width_ASC = 'width_ASC',
+  width_DESC = 'width_DESC'
 }
 
 /** Transformations for Assets */
@@ -5879,18 +5879,18 @@ export type PageManyWhereInput = {
 };
 
 export enum PageOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  HeadingAsc = 'heading_ASC',
-  HeadingDesc = 'heading_DESC',
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  PublishedAtAsc = 'publishedAt_ASC',
-  PublishedAtDesc = 'publishedAt_DESC',
-  SlugAsc = 'slug_ASC',
-  SlugDesc = 'slug_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC'
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  heading_ASC = 'heading_ASC',
+  heading_DESC = 'heading_DESC',
+  id_ASC = 'id_ASC',
+  id_DESC = 'id_DESC',
+  publishedAt_ASC = 'publishedAt_ASC',
+  publishedAt_DESC = 'publishedAt_DESC',
+  slug_ASC = 'slug_ASC',
+  slug_DESC = 'slug_DESC',
+  updatedAt_ASC = 'updatedAt_ASC',
+  updatedAt_DESC = 'updatedAt_DESC'
 }
 
 export type PageUpdateInput = {
@@ -6372,18 +6372,18 @@ export type PlaceManyWhereInput = {
 };
 
 export enum PlaceOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  NameAsc = 'name_ASC',
-  NameDesc = 'name_DESC',
-  PublishedAtAsc = 'publishedAt_ASC',
-  PublishedAtDesc = 'publishedAt_DESC',
-  SlugAsc = 'slug_ASC',
-  SlugDesc = 'slug_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC'
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  id_ASC = 'id_ASC',
+  id_DESC = 'id_DESC',
+  name_ASC = 'name_ASC',
+  name_DESC = 'name_DESC',
+  publishedAt_ASC = 'publishedAt_ASC',
+  publishedAt_DESC = 'publishedAt_DESC',
+  slug_ASC = 'slug_ASC',
+  slug_DESC = 'slug_DESC',
+  updatedAt_ASC = 'updatedAt_ASC',
+  updatedAt_DESC = 'updatedAt_DESC'
 }
 
 export type PlaceUpdateInput = {
@@ -7157,29 +7157,29 @@ export type ScheduledOperationManyWhereInput = {
 };
 
 export enum ScheduledOperationOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  DescriptionAsc = 'description_ASC',
-  DescriptionDesc = 'description_DESC',
-  ErrorMessageAsc = 'errorMessage_ASC',
-  ErrorMessageDesc = 'errorMessage_DESC',
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  PublishedAtAsc = 'publishedAt_ASC',
-  PublishedAtDesc = 'publishedAt_DESC',
-  StatusAsc = 'status_ASC',
-  StatusDesc = 'status_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC'
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  description_ASC = 'description_ASC',
+  description_DESC = 'description_DESC',
+  errorMessage_ASC = 'errorMessage_ASC',
+  errorMessage_DESC = 'errorMessage_DESC',
+  id_ASC = 'id_ASC',
+  id_DESC = 'id_DESC',
+  publishedAt_ASC = 'publishedAt_ASC',
+  publishedAt_DESC = 'publishedAt_DESC',
+  status_ASC = 'status_ASC',
+  status_DESC = 'status_DESC',
+  updatedAt_ASC = 'updatedAt_ASC',
+  updatedAt_DESC = 'updatedAt_DESC'
 }
 
 /** System Scheduled Operation Status */
 export enum ScheduledOperationStatus {
-  Canceled = 'CANCELED',
-  Completed = 'COMPLETED',
-  Failed = 'FAILED',
-  InProgress = 'IN_PROGRESS',
-  Pending = 'PENDING'
+  CANCELED = 'CANCELED',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  PENDING = 'PENDING'
 }
 
 export type ScheduledOperationUpdateManyInlineInput = {
@@ -7624,36 +7624,36 @@ export type ScheduledReleaseManyWhereInput = {
 };
 
 export enum ScheduledReleaseOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  DescriptionAsc = 'description_ASC',
-  DescriptionDesc = 'description_DESC',
-  ErrorMessageAsc = 'errorMessage_ASC',
-  ErrorMessageDesc = 'errorMessage_DESC',
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  IsActiveAsc = 'isActive_ASC',
-  IsActiveDesc = 'isActive_DESC',
-  IsImplicitAsc = 'isImplicit_ASC',
-  IsImplicitDesc = 'isImplicit_DESC',
-  PublishedAtAsc = 'publishedAt_ASC',
-  PublishedAtDesc = 'publishedAt_DESC',
-  ReleaseAtAsc = 'releaseAt_ASC',
-  ReleaseAtDesc = 'releaseAt_DESC',
-  StatusAsc = 'status_ASC',
-  StatusDesc = 'status_DESC',
-  TitleAsc = 'title_ASC',
-  TitleDesc = 'title_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC'
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  description_ASC = 'description_ASC',
+  description_DESC = 'description_DESC',
+  errorMessage_ASC = 'errorMessage_ASC',
+  errorMessage_DESC = 'errorMessage_DESC',
+  id_ASC = 'id_ASC',
+  id_DESC = 'id_DESC',
+  isActive_ASC = 'isActive_ASC',
+  isActive_DESC = 'isActive_DESC',
+  isImplicit_ASC = 'isImplicit_ASC',
+  isImplicit_DESC = 'isImplicit_DESC',
+  publishedAt_ASC = 'publishedAt_ASC',
+  publishedAt_DESC = 'publishedAt_DESC',
+  releaseAt_ASC = 'releaseAt_ASC',
+  releaseAt_DESC = 'releaseAt_DESC',
+  status_ASC = 'status_ASC',
+  status_DESC = 'status_DESC',
+  title_ASC = 'title_ASC',
+  title_DESC = 'title_DESC',
+  updatedAt_ASC = 'updatedAt_ASC',
+  updatedAt_DESC = 'updatedAt_DESC'
 }
 
 /** System Scheduled Release Status */
 export enum ScheduledReleaseStatus {
-  Completed = 'COMPLETED',
-  Failed = 'FAILED',
-  InProgress = 'IN_PROGRESS',
-  Pending = 'PENDING'
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  PENDING = 'PENDING'
 }
 
 export type ScheduledReleaseUpdateInput = {
@@ -7907,15 +7907,15 @@ export type ScheduledReleaseWhereUniqueInput = {
 /** Stage system enumeration */
 export enum Stage {
   /** The Draft is the default stage for all your content. */
-  Draft = 'DRAFT',
+  DRAFT = 'DRAFT',
   /** The Published stage is where you can publish your content to. */
-  Published = 'PUBLISHED'
+  PUBLISHED = 'PUBLISHED'
 }
 
 export enum SystemDateTimeFieldVariation {
-  Base = 'BASE',
-  Combined = 'COMBINED',
-  Localization = 'LOCALIZATION'
+  BASE = 'BASE',
+  COMBINED = 'COMBINED',
+  LOCALIZATION = 'LOCALIZATION'
 }
 
 export type UnpublishLocaleInput = {
@@ -7996,10 +7996,10 @@ export type UserEdge = {
 
 /** System User Kind */
 export enum UserKind {
-  Member = 'MEMBER',
-  Pat = 'PAT',
-  Public = 'PUBLIC',
-  Webhook = 'WEBHOOK'
+  MEMBER = 'MEMBER',
+  PAT = 'PAT',
+  PUBLIC = 'PUBLIC',
+  WEBHOOK = 'WEBHOOK'
 }
 
 /** Identifies documents */
@@ -8130,22 +8130,22 @@ export type UserManyWhereInput = {
 };
 
 export enum UserOrderByInput {
-  CreatedAtAsc = 'createdAt_ASC',
-  CreatedAtDesc = 'createdAt_DESC',
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC',
-  IsActiveAsc = 'isActive_ASC',
-  IsActiveDesc = 'isActive_DESC',
-  KindAsc = 'kind_ASC',
-  KindDesc = 'kind_DESC',
-  NameAsc = 'name_ASC',
-  NameDesc = 'name_DESC',
-  PictureAsc = 'picture_ASC',
-  PictureDesc = 'picture_DESC',
-  PublishedAtAsc = 'publishedAt_ASC',
-  PublishedAtDesc = 'publishedAt_DESC',
-  UpdatedAtAsc = 'updatedAt_ASC',
-  UpdatedAtDesc = 'updatedAt_DESC'
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  id_ASC = 'id_ASC',
+  id_DESC = 'id_DESC',
+  isActive_ASC = 'isActive_ASC',
+  isActive_DESC = 'isActive_DESC',
+  kind_ASC = 'kind_ASC',
+  kind_DESC = 'kind_DESC',
+  name_ASC = 'name_ASC',
+  name_DESC = 'name_DESC',
+  picture_ASC = 'picture_ASC',
+  picture_DESC = 'picture_DESC',
+  publishedAt_ASC = 'publishedAt_ASC',
+  publishedAt_DESC = 'publishedAt_DESC',
+  updatedAt_ASC = 'updatedAt_ASC',
+  updatedAt_DESC = 'updatedAt_DESC'
 }
 
 export type UserUpdateManyInlineInput = {
@@ -8331,38 +8331,38 @@ export type VersionWhereInput = {
 };
 
 export enum _FilterKind {
-  And = 'AND',
-  Not = 'NOT',
-  Or = 'OR',
+  AND = 'AND',
+  NOT = 'NOT',
+  OR = 'OR',
   Contains = 'contains',
-  ContainsAll = 'contains_all',
-  ContainsNone = 'contains_none',
-  ContainsSome = 'contains_some',
-  EndsWith = 'ends_with',
+  Contains_all = 'contains_all',
+  Contains_none = 'contains_none',
+  Contains_some = 'contains_some',
+  Ends_with = 'ends_with',
   Eq = 'eq',
-  EqNot = 'eq_not',
+  Eq_not = 'eq_not',
   Gt = 'gt',
   Gte = 'gte',
   In = 'in',
   Lt = 'lt',
   Lte = 'lte',
-  NotContains = 'not_contains',
-  NotEndsWith = 'not_ends_with',
-  NotIn = 'not_in',
-  NotStartsWith = 'not_starts_with',
-  RelationalEvery = 'relational_every',
-  RelationalNone = 'relational_none',
-  RelationalSingle = 'relational_single',
-  RelationalSome = 'relational_some',
+  Not_contains = 'not_contains',
+  Not_ends_with = 'not_ends_with',
+  Not_in = 'not_in',
+  Not_starts_with = 'not_starts_with',
+  Relational_every = 'relational_every',
+  Relational_none = 'relational_none',
+  Relational_single = 'relational_single',
+  Relational_some = 'relational_some',
   Search = 'search',
-  StartsWith = 'starts_with'
+  Starts_with = 'starts_with'
 }
 
 export enum _MutationInputFieldKind {
   Enum = 'enum',
   Relation = 'relation',
-  RichText = 'richText',
-  RichTextWithEmbeds = 'richTextWithEmbeds',
+  richText = 'richText',
+  richTextWithEmbeds = 'richTextWithEmbeds',
   Scalar = 'scalar',
   Union = 'union',
   Virtual = 'virtual'
@@ -8371,15 +8371,15 @@ export enum _MutationInputFieldKind {
 export enum _MutationKind {
   Create = 'create',
   Delete = 'delete',
-  DeleteMany = 'deleteMany',
+  deleteMany = 'deleteMany',
   Publish = 'publish',
-  PublishMany = 'publishMany',
-  SchedulePublish = 'schedulePublish',
-  ScheduleUnpublish = 'scheduleUnpublish',
+  publishMany = 'publishMany',
+  schedulePublish = 'schedulePublish',
+  scheduleUnpublish = 'scheduleUnpublish',
   Unpublish = 'unpublish',
-  UnpublishMany = 'unpublishMany',
+  unpublishMany = 'unpublishMany',
   Update = 'update',
-  UpdateMany = 'updateMany',
+  updateMany = 'updateMany',
   Upsert = 'upsert'
 }
 

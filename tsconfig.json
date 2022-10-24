@@ -3,6 +3,9 @@
     "baseUrl": "./src",
     "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "paths": {
+      "*": ["node_modules/@types/*", "*"]
+    },
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
